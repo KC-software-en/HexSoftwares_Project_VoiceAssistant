@@ -28,6 +28,12 @@ def start_engine():
     # use defensive programming with try-except blocks
     try:
         engine = ts.init()
+        # slow down the rate of speech
+        # https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.getProperty
+        # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-speech-rate
+        rate = engine.getProperty("rate") 
+        #print(f"rate:{rate}")
+        engine.setProperty("rate", 180)    
         # set the voice to USA Zira
         # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-voices
         voices = engine.getProperty("voices")    
