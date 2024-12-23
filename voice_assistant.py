@@ -144,7 +144,7 @@ class UserInput():
             try: 
                 with sr.Microphone() as source:  
                     # adjust the sensitivity to volume for a moderately nosy environment (low-quiet; high-noisy)
-                    self.r.energy_threshold = 900              
+                    self.r.energy_threshold = 500              
                     # adjust for ambient noise
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
                     print("Calibrating for background noises...")
@@ -157,29 +157,24 @@ class UserInput():
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/audio_transcribe.py
                     self.text = self.r.recognize_google(self.audio)
                     #try:
-                    print(f"Google thinks you said: \"{self.text}\"\n")
+                    print(f"Google thinks you said: \"{self.text}\"\n\n")
                     # return will break the loop
                     return self.text
 
             except sr.UnknownValueError as e:                
-                print("Google Speech Recognition could not understand the audio for your name: {e}. Please try again.")
+                print(f"Google Speech Recognition could not understand the audio for your name: {e}. Please try again.\n\n")
                 # use the stored instance to call assistant_speak()
-                self.assistant.assistant_speak("I did not hear you clearly. Please try again.\n")
+                self.assistant.assistant_speak("I did not hear you clearly. Please try again.")
                 # continue loop to try again
                 continue
 
             except sr.RequestError as e:
-                print("Unable to request results from Google Speech Recognition service: {e}")
+                print(f"Unable to request results from Google Speech Recognition service: {e}\n\n")
                 # use the stored instance to call assistant_speak()
                 self.assistant.assistant_speak(
-                    "I am unable to connect to the Google Speech Recognition service. Please try again.\n")
+                    "I am unable to connect to the Google Speech Recognition service. Please try again.")
                 # continue loop to try again
-                continue
-
-            # continue the loop
-            #except Exception as e:
-             #   print(f"There was an error: {e}")
-              #  continue
+                continue            
 
 # ask the assistant what is the user's name
 
