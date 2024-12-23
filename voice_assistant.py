@@ -124,10 +124,13 @@ class AssistantWelcome():
     # ask the user what they would like to do
 
 class UserInput():
-    def __init__(self):
+    # add assistant parameter to constructor
+    def __init__(self, assistant):
         # create an instance of the recogniser class to retrieve information from microphone
         # https://github.com/Uberi/speech_recognition/blob/master/examples/microphone_recognition.py
         self.r = sr.Recognizer()
+        # store the reference to AssistantWelcome() instance so that the speak method can be used later
+        self.assistant = assistant
 
     def user_speak(self):
         """A method for the user to speak to the assistant
@@ -135,17 +138,47 @@ class UserInput():
         :return: Return the text that Google thinks the user said.
         :rtype: str
         """
-        with sr.Microphone() as source:
-            # adjust for ambient noise
-            # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
-            self.r.adjust_for_ambient_noise(source)
-            # listen for audio from the microphone & save it
-            self.audio = self.r.listen(source)
-            # send audio to Google API engine to convert it to text
-            self.text = self.r.recognize_google(self.audio)
-            print(f"You said: \"{self.text}\"")
-            return self.text
-        
+        # use a while loop that ends when Google understands the user's speech 
+
+        while True:
+            try: 
+                with sr.Microphone() as source:                
+                    # adjust for ambient noise
+                    # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
+                    print("Calibrating for background noises...")
+                    self.r.adjust_for_ambient_noise(source, 1.5)
+                    # listen for audio from the microphone & save it
+                    print("Listening...")
+                    self.audio = self.r.listen(source)
+                    # send audio to Google API engine to convert it to text
+                    # use defensive programming with try-except blocks to save audio
+                    # https://github.com/Uberi/speech_recognition/blob/master/examples/audio_transcribe.py
+                    self.text = self.r.recognize_google(self.audio)
+                    #try:
+                    print(f"Google thinks you said: \"{self.text}\"\n")
+                    # return will break the loop
+                    return self.text
+
+            except sr.UnknownValueError as e:                
+                print("Google Speech Recognition could not understand the audio for your name: {e}. Please try again.")
+                # use the stored instance to call assistant_speak()
+                self.assistant.assistant_speak("I did not hear you clearly. Please try again.\n")
+                # continue loop to try again
+                continue
+
+            except sr.RequestError as e:
+                print("Unable to request results from Google Speech Recognition service: {e}")
+                # use the stored instance to call assistant_speak()
+                self.assistant.assistant_speak(
+                    "I am unable to connect to the Google Speech Recognition service. Please try again.\n")
+                # continue loop to try again
+                continue
+
+            # continue the loop
+            #except Exception as e:
+             #   print(f"There was an error: {e}")
+              #  continue
+
 # ask the assistant what is the user's name
 
 # code the various key words to listen for in a request
@@ -194,7 +227,8 @@ def main():
     assistant_welcome = AssistantWelcome(engine)
 
     # create an instance of UserInput()
-    user_input = UserInput()
+    # store AssistantWelcome() instance in UserInput() so the assistant can speak up for errors
+    user_input = UserInput(assistant_welcome)
 
     # call AssistantWelcome() methods
     assistant_welcome.assistant_greeting()
