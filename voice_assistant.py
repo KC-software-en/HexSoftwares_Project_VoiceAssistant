@@ -15,12 +15,12 @@ import speech_recognition as sr
 
 # create a function that starts the engine for pyttsx3 
 def start_engine():  
-    """Initialise the text-to-speech engine.
+    """Initialise an instance of the text-to-speech engine.
 
-    :raises ImportError: _description_
-    :raises RuntimeError: _description_
-    :return: _description_
-    :rtype: _type_
+    :raises ImportError: An error when the requested driver is not found
+    :raises RuntimeError: An error for when the driver fails to initialise
+    :return: Return an instance of the text-to-speech engine
+    :rtype: pyttsx3.Engine
     """
     # Get a reference to an engine instance that will use the given driver
     # https://pyttsx3.readthedocs.io/en/stable/engine.html#the-engine-factory
@@ -70,12 +70,12 @@ class AssistantWelcome():
     # https://pyttsx3.readthedocs.io/en/stable/engine.html#speaking-text
     # https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.runAndWait
     def assistant_greeting(self):
+        """A method for the assistant ot greet the user.
+        """
         # print greeting
         print("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
-        # call assistant_speak() Queue a command to speak an utterance
-        self.assistant_speak("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
-        # pause program until spoken text is complete
-        ##engine.runAndWait()
+        # call assistant_speak() to say the greeting
+        self.assistant_speak("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")        
 
     # tell the user the the date, time and weather where by the user
     def present_conditions(self):
@@ -98,20 +98,48 @@ class AssistantWelcome():
 
         # print the present conditions
         print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
-        # say the present conditions
-        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
-        # pause program until spoken text is complete
-        ##engine.runAndWait()
+        # call assistant_speak to say the present conditions
+        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")        
 
-# ask the user for their name
+    # ask the user for their name
+    def request_user_name(self):
+        """A method where the assistant asks for the user's name.
+        """
+        print("What is your name?")
+        self.assistant_speak("What is your name?")
 
-# greet the user with their name by both speaking and writing it out 
-# use hour to greet with either morning, afternoon or evening
+    # greet the user with their name by both speaking and writing it out 
+    # use hour to greet with either morning, afternoon or evening
+    def greet_user(self):
+        pass
 
-## ask the user how they are doing ##
+    ## ask the user how they are doing ##
 
-# ask the user what they would like to do
+    # ask the user what they would like to do
 
+class UserInput():
+    def __init__(self):
+        # create an instance of the recogniser class to retrieve information from microphone
+        # https://github.com/Uberi/speech_recognition/blob/master/examples/microphone_recognition.py
+        self.r = sr.Recognizer()
+
+    def user_speak(self):
+        """A method for the user to speak to the assistant
+
+        :return: Return the text that Google thinks the user said.
+        :rtype: str
+        """
+        with sr.Microphone() as source:
+            # adjust for ambient noise
+            # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
+            self.r.adjust_for_ambient_noise(source)
+            # listen for audio from the microphone & save it
+            self.audio = self.r.listen(source)
+            # send audio to Google API engine to convert it to text
+            self.text = self.r.recognize_google(self.audio)
+            print(f"You said: \"{self.text}\"")
+            return self.text
+        
 # ask the assistant what is the user's name
 
 # code the various key words to listen for in a request
@@ -156,12 +184,20 @@ class AssistantWelcome():
 # Main code
 def main():
     engine = start_engine()
-    # create an instance of AssistantWelcome
+    # create an instance of AssistantWelcome()
     assistant_welcome = AssistantWelcome(engine)
 
-    # call AssistantWelcome methods
+    # create an instance of UserInput()
+    user_input = UserInput()
+
+    # call AssistantWelcome() methods
     assistant_welcome.assistant_greeting()
     assistant_welcome.present_conditions() 
+    assistant_welcome.request_user_name()
+    # call UserInput() methods
+    user_input.user_speak()
+
+    
 
 #################################################################################################
 # call the main function
