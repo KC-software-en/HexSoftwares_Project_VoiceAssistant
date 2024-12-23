@@ -3,29 +3,42 @@
 # convert text to speech
 import pyttsx3 as ts
 
+# import datetime to get the date, time
+import datetime
+
 #################################################################################################
 # Functions
 
 # Get a reference to an engine instance that will use the given driver
 # https://pyttsx3.readthedocs.io/en/stable/engine.html#the-engine-factory
-def start_ts_engine():
-    # initiate an instance of the pyttsx3 class
-    # use defensive programming with try-except blocks
-    try:
-        engine = ts.init()
 
-    # Raise errors	
-    # ImportError – When the requested driver is not found
-    except ImportError as e:
-        print(f"There was an error importing text-to-speech engine: {e}")
-        raise ImportError("Check that pyttsx3 was installed & try again.")
+# initiate an instance of the pyttsx3 class
+# use defensive programming with try-except blocks
+try:
+    engine = ts.init()
 
-    # RuntimeError – When the driver fails to initialise
-    except RuntimeError as e:
-        print(f"There was an error initiating text-to-speech engine: {e}")
-        raise RuntimeError("There was a problem initiating pyttsx3.")
+# Raise errors	
+# ImportError – When the requested driver is not found
+except ImportError as e:
+    print(f"There was an error importing text-to-speech engine: {e}")
+    raise ImportError("Check that pyttsx3 was installed & try again.")
+
+# RuntimeError – When the driver fails to initialise
+except RuntimeError as e:
+    print(f"There was an error initiating text-to-speech engine: {e}")
+    raise RuntimeError("There was a problem initiating pyttsx3.")
   
 # the assistant greets the user
+# https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.say
+# https://pyttsx3.readthedocs.io/en/stable/engine.html#speaking-text
+# https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.runAndWait
+def assistant_greeting():
+    # print greeting
+    print("Hello, I am Cal. I can assist you with a variety of tasks to the best of my ability.")
+    # Queue a command to speak an utterance
+    engine.say("Hello, I am Cal. I can assist you with a variety of tasks to the best of my ability.")
+    # pause program until spoken text is complete
+    engine.runAndWait()
 
 # ask the user for their name
 
@@ -79,7 +92,8 @@ def start_ts_engine():
 
 # Main code
 def main():
-    start_ts_engine()
+    # start_ts_engine()
+    assistant_greeting()
 
 #################################################################################################
 # call the main function
