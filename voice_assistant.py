@@ -6,69 +6,102 @@ import pyttsx3 as ts
 # import datetime to get the date, time
 import datetime
 
+# https://pypi.org/project/SpeechRecognition/
+# https://www.geeksforgeeks.org/python-speech-recognition-module/
+import speech_recognition as sr
+
 #################################################################################################
 # Functions
 
-# Get a reference to an engine instance that will use the given driver
-# https://pyttsx3.readthedocs.io/en/stable/engine.html#the-engine-factory
+# create a function that starts the engine for pyttsx3 
+def start_engine():  
+    """Initialise the text-to-speech engine.
 
-# initiate an instance of the pyttsx3 class
-# use defensive programming with try-except blocks
-try:
-    engine = ts.init()
-    # set the voice to USA Zira
-    # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-voices
-    voices = engine.getProperty("voices")    
-    engine.setProperty("voice", voices[1].id)    
+    :raises ImportError: _description_
+    :raises RuntimeError: _description_
+    :return: _description_
+    :rtype: _type_
+    """
+    # Get a reference to an engine instance that will use the given driver
+    # https://pyttsx3.readthedocs.io/en/stable/engine.html#the-engine-factory
+    # initiate an instance of the pyttsx3 class
+    # use defensive programming with try-except blocks
+    try:
+        engine = ts.init()
+        # set the voice to USA Zira
+        # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-voices
+        voices = engine.getProperty("voices")    
+        engine.setProperty("voice", voices[1].id)    
+        return engine
 
-# Raise errors	
-# ImportError – When the requested driver is not found
-except ImportError as e:
-    print(f"There was an error importing text-to-speech engine: {e}")
-    raise ImportError("Check that pyttsx3 was installed & try again.")
+    # Raise errors	
+    # ImportError – When the requested driver is not found
+    except ImportError as e:
+        print(f"There was an error importing text-to-speech engine: {e}")
+        raise ImportError("Check that pyttsx3 was installed & try again.")
 
-# RuntimeError – When the driver fails to initialise
-except RuntimeError as e:
-    print(f"There was an error initiating text-to-speech engine: {e}")
-    raise RuntimeError("There was a problem initiating pyttsx3.")
-  
-# the assistant greets the user
-# https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.say
-# https://pyttsx3.readthedocs.io/en/stable/engine.html#speaking-text
-# https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.runAndWait
-def assistant_greeting():
-    # print greeting
-    print("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
-    # Queue a command to speak an utterance
-    engine.say("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
-    # pause program until spoken text is complete
-    engine.runAndWait()
+    # RuntimeError – When the driver fails to initialise
+    except RuntimeError as e:
+        print(f"There was an error initiating text-to-speech engine: {e}")
+        raise RuntimeError("There was a problem initiating pyttsx3.")
 
-# tell the user the the date, time and weather where by the user
-def present_conditions():
-    # get the current time
-    # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
-    time = datetime.datetime.now().strftime("%I:%M%p")
+# create a  class) methods from the base class, StartEngine()
+# the class contains the methods that welcome the user & introduce the program
+class AssistantWelcome():
+    # initialise AssistantWelcome() with ts engine
+    def __init__(self, engine):
+        self.engine = engine
 
-    # get the day
-    # https://docs.python.org/3/library/datetime.html#datetime.datetime.date
-    day = datetime.date.today().strftime("%A")
+    # create a method for the assistant to speak
+    def assistant_speak(self, utterance):
+        """A method for the assistant to speak.
 
-    # get the date
-    # https://docs.python.org/3/library/datetime.html#datetime.date.today
-    date = datetime.date.today().strftime("%d")
-    month = datetime.date.today().strftime("%B")
+        :param utterance: A sentence that the assistant will say.
+        :type utterance: str
+        """
+        # Queue a command to speak an utterance
+        self.engine.say(utterance)
 
-    # get the weather
-    # https://openweathermap.org/api
-    weather = "hot"
+        # pause program until spoken text is complete
+        self.engine.runAndWait()
 
-    # print the present conditions
-    print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
-    # say the present conditions
-    engine.say(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
-    # pause program until spoken text is complete
-    engine.runAndWait()
+    # the assistant greets the user
+    # https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.say
+    # https://pyttsx3.readthedocs.io/en/stable/engine.html#speaking-text
+    # https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.runAndWait
+    def assistant_greeting(self):
+        # print greeting
+        print("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
+        # call assistant_speak() Queue a command to speak an utterance
+        self.assistant_speak("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
+        # pause program until spoken text is complete
+        ##engine.runAndWait()
+
+    # tell the user the the date, time and weather where by the user
+    def present_conditions(self):
+        # get the current time
+        # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+        time = datetime.datetime.now().strftime("%I:%M%p")
+
+        # get the day
+        # https://docs.python.org/3/library/datetime.html#datetime.datetime.date
+        day = datetime.date.today().strftime("%A")
+
+        # get the date
+        # https://docs.python.org/3/library/datetime.html#datetime.date.today
+        date = datetime.date.today().strftime("%d")
+        month = datetime.date.today().strftime("%B")
+
+        # get the weather
+        # https://openweathermap.org/api
+        weather = "hot" ################################## incomplete
+
+        # print the present conditions
+        print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
+        # say the present conditions
+        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
+        # pause program until spoken text is complete
+        ##engine.runAndWait()
 
 # ask the user for their name
 
@@ -122,9 +155,13 @@ def present_conditions():
 
 # Main code
 def main():
-    # start_ts_engine()
-    assistant_greeting()
-    present_conditions() 
+    engine = start_engine()
+    # create an instance of AssistantWelcome
+    assistant_welcome = AssistantWelcome(engine)
+
+    # call AssistantWelcome methods
+    assistant_welcome.assistant_greeting()
+    assistant_welcome.present_conditions() 
 
 #################################################################################################
 # call the main function
