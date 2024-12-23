@@ -16,6 +16,10 @@ import datetime
 # use defensive programming with try-except blocks
 try:
     engine = ts.init()
+    # set the voice to USA Zira
+    # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-voices
+    voices = engine.getProperty("voices")    
+    engine.setProperty("voice", voices[1].id)    
 
 # Raise errors	
 # ImportError – When the requested driver is not found
@@ -34,9 +38,9 @@ except RuntimeError as e:
 # https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.runAndWait
 def assistant_greeting():
     # print greeting
-    print("Hello, I am Cal. I can assist you with a variety of tasks to the best of my ability.")
+    print("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
     # Queue a command to speak an utterance
-    engine.say("Hello, I am Cal. I can assist you with a variety of tasks to the best of my ability.")
+    engine.say("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
     # pause program until spoken text is complete
     engine.runAndWait()
 
