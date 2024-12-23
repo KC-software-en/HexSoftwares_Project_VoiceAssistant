@@ -142,7 +142,9 @@ class UserInput():
 
         while True:
             try: 
-                with sr.Microphone() as source:                
+                with sr.Microphone() as source:  
+                    # adjust the sensitivity to volume for a moderately nosy environment (low-quiet; high-noisy)
+                    self.r.energy_threshold = 900              
                     # adjust for ambient noise
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
                     print("Calibrating for background noises...")
