@@ -40,6 +40,32 @@ def assistant_greeting():
     # pause program until spoken text is complete
     engine.runAndWait()
 
+# tell the user the the date, time and weather where by the user
+def present_conditions():
+    # get the current time
+    # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+    time = datetime.datetime.now().strftime("%I:%M%p")
+
+    # get the day
+    # https://docs.python.org/3/library/datetime.html#datetime.datetime.date
+    day = datetime.date.today().strftime("%A")
+
+    # get the date
+    # https://docs.python.org/3/library/datetime.html#datetime.date.today
+    date = datetime.date.today().strftime("%d")
+    month = datetime.date.today().strftime("%B")
+
+    # get the weather
+    # https://openweathermap.org/api
+    weather = "hot"
+
+    # print the present conditions
+    print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
+    # say the present conditions
+    engine.say(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
+    # pause program until spoken text is complete
+    engine.runAndWait()
+
 # ask the user for their name
 
 # greet the user with their name by both speaking and writing it out 
@@ -94,6 +120,7 @@ def assistant_greeting():
 def main():
     # start_ts_engine()
     assistant_greeting()
+    present_conditions() 
 
 #################################################################################################
 # call the main function
