@@ -131,14 +131,12 @@ class AssistantWelcome():
         
 
     # greet the user with their name by both speaking and printing it out     
-    def greet_user(self, user_name):
+    def greet_user(self, username_stripped):
         """A method to greet the user by their name.
 
         :param user_name: Input from the microphone for the user's name
         :type user_name: str
-        """
-        # remove suggested pattern "my name is" from user_name so that only the user's name remains
-        username_stripped = user_name.strip("my name is")
+        """                
         # get the current time's hour
         time = datetime.datetime.now().hour #int
         # use the hour to greet with either morning, afternoon or evening
@@ -178,14 +176,18 @@ class UserInput():
         while True:
             try: 
                 with sr.Microphone() as source:  
-                    # adjust the sensitivity to volume for a moderately nosy environment (low-quiet; high-noisy)
-                    self.r.energy_threshold = 600              
+                    self.r.energy_threshold = 600  
+                    # add a pause threshold - seconds of non-speaking audio before a phrase is considered complete
+                    # https://github.com/Uberi/speech_recognition/blob/master/speech_recognition/__init__.py
+                    self.r.pause_threshold = 5            
                     # adjust for ambient noise
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
                     print("Calibrating for background noises...")
                     self.r.adjust_for_ambient_noise(source, 1.5)
+
                     # listen for audio from the microphone & save it
                     print("Listening...")
+                    self.assistant.assistant_speak("I'm listening...")
                     self.audio = self.r.listen(source)
                     # send audio to Google API engine to convert it to text
                     # use defensive programming with try-except blocks to save audio
@@ -234,26 +236,49 @@ class UserInput():
         :param user_name: Name input received over the microphone, from the user.
         :type user_name: str
         """
+        # strip suggested word separately in case the use repeates the phrase
+        username_stripped = user_name.replace("my", "").replace("name", "").replace("is", "").strip()        
         while True:
+
             # check if the user said their name according to the suggestion
             # https://docs.python.org/3.11/library/re.html#re.search
             # use conditional statements to check for if "My name is" in user_name        
             # use regular expression to check for the pattern in the str
             if re.search("my name is", user_name):
                 # call method for assistant to give a custom welcome
-                self.assistant.greet_user(user_name)
+                self.assistant.greet_user(username_stripped)
                 # break the loop 
                 break
 
-            # if the pattern is not found, call request_user_name() again
-            else:
-                self.user_error("Please use the suggested phrase before saying you name.")
-                self.assistant.assistant_speak("Please use the suggested phrase before saying you name.")
+            # check if there is no name found after the suggested phrase "my name is"
+            elif user_name == "my name is":
+                self.user_error("The Google Speech Recognition service did not catch your name. Please try again")
+                self.assistant.assistant_speak(
+                    "Your name is not present in Google Speech Recognition service. Please try again.")
+                # call request_user_name() again
                 self.assistant.request_user_name()
                 user_name = self.user_speak()
                 # continue the loop
                 continue
 
+            # remove suggested pattern "my name is" from user_name so that only the user's name remains            
+            # check if the stripped username is empty
+            # added for if the user repeats suggested phrase
+            elif username_stripped == " ":
+                # call method to request the user's name again  
+                self.assistant.request_user_name()                          
+                user_name = self.user_speak()
+                continue
+
+            # check if the pattern is not found, call request_user_name() again
+            else:
+                self.user_error("Please use the suggested phrase before saying your name.")
+                self.assistant.assistant_speak("Please use the suggested phrase before saying you name.")
+                self.assistant.request_user_name()
+                user_name = self.user_speak()
+                # continue the loop
+                continue
+            
 # code the various key words to listen for in a request
 
 # search google for an answer 
