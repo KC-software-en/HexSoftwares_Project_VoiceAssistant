@@ -171,25 +171,36 @@ class UserInput():
                     # return will break the loop
                     return self.text
 
-            except sr.UnknownValueError as e:                
-                print(f"Google Speech Recognition could not understand the audio for your name: {e}. Please try again.\n\n")
-                # use the stored instance to call assistant_speak()
+            except sr.UnknownValueError as e:   
+                error_message = f"Google Speech Recognition could not understand the audio for your name: {e}. Please try again.\n"            
+                # call method to print error message
+                self.user_error(error_message)
+
+                # use the stored instance to call assistant_speak()                
                 self.assistant.assistant_speak("I did not hear you clearly. Please try again.")
                 # continue loop to try again
                 continue
 
             except sr.RequestError as e:
-                print(f"Unable to request results from Google Speech Recognition service: {e}\n\n")
+                error_message = f"Unable to request results from Google Speech Recognition service: {e}\n\n"
+                # call method to print error message
+                self.user_error(error_message)
+
                 # use the stored instance to call assistant_speak()
                 self.assistant.assistant_speak(
                     "I am unable to connect to the Google Speech Recognition service. Please try again.")
                 # continue loop to try again
                 continue            
 
-    def user_suggestion(suggestion):
+    def user_suggestion(self, suggestion):
         # use fontstyle to format the suggestion in blue, italic
         # print the suggestion 
         print(fontstyle.apply(suggestion, 'Italic/cyan'))
+
+    def user_error(self, error_message):        
+        # use fontstyle to format the error in bold, red
+        # print the error message
+        print(fontstyle.apply(error_message, 'red/bold'))
 
     # ask the assistant what is the user's name
     def check_user_name():
