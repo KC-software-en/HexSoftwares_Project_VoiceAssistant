@@ -1,14 +1,19 @@
 # imports
 
-# convert text to speech
+# import pyttsx3 to convert text to speech
 import pyttsx3 as ts
 
 # import datetime to get the date, time
 import datetime
 
+# import speech_recognition so that Google API can process input to the microphone
 # https://pypi.org/project/SpeechRecognition/
 # https://www.geeksforgeeks.org/python-speech-recognition-module/
 import speech_recognition as sr
+
+# import fontstyle for italic suggestions & red errors
+# https://www.geeksforgeeks.org/fontstyle-module-in-python/
+import fontstyle
 
 #################################################################################################
 # Functions
@@ -105,7 +110,7 @@ class AssistantWelcome():
         # print the present conditions
         print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
         # call assistant_speak to say the present conditions
-        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")        
+        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}\n\n")        
 
     # ask the user for their name
     def request_user_name(self):
@@ -113,6 +118,11 @@ class AssistantWelcome():
         """
         print("What is your name?")
         self.assistant_speak("What is your name?")
+        # include a suggestion for the user because these word will be checked
+        suggestion = "Suggestion: My name is ...\n"
+        # call user_suggestion method to format output of suggestion
+        UserInput.user_suggestion(suggestion)
+        
 
     # greet the user with their name by both speaking and writing it out 
     # use hour to greet with either morning, afternoon or evening
@@ -176,6 +186,11 @@ class UserInput():
                 # continue loop to try again
                 continue            
 
+    def user_suggestion(suggestion):
+        # use fontstyle to format the suggestion in blue, italic
+        # print the suggestion 
+        print(fontstyle.apply(suggestion, 'Italic/cyan'))
+
     # ask the assistant what is the user's name
     def check_user_name():
         pass
@@ -233,8 +248,12 @@ def main():
     assistant_welcome.assistant_greeting()
     assistant_welcome.present_conditions() 
     assistant_welcome.request_user_name()
-    # call UserInput() methods
-    user_input.user_speak()
+    # call UserInput() methods ## need to save this audio as user name
+    user_name = user_input.user_speak()
+    
+    # check if the user said their name according to the suggestion
+    #if "My name is" in user_name:
+        
 
     
 
