@@ -32,8 +32,5 @@ class WikiBot():
         # click on search button to submit query
         search_button.click()
 
-# create an instance of the class
-info = WikiBot()
-# call the wiki_search method
-info.wiki_search("selenium")
+
 
