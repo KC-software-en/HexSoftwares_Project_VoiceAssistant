@@ -144,7 +144,7 @@ class UserInput():
             try: 
                 with sr.Microphone() as source:  
                     # adjust the sensitivity to volume for a moderately nosy environment (low-quiet; high-noisy)
-                    self.r.energy_threshold = 500              
+                    self.r.energy_threshold = 600              
                     # adjust for ambient noise
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
                     print("Calibrating for background noises...")
@@ -176,7 +176,9 @@ class UserInput():
                 # continue loop to try again
                 continue            
 
-# ask the assistant what is the user's name
+    # ask the assistant what is the user's name
+    def check_user_name():
+        pass
 
 # code the various key words to listen for in a request
 
