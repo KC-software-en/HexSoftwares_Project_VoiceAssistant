@@ -15,6 +15,9 @@ import speech_recognition as sr
 # https://www.geeksforgeeks.org/fontstyle-module-in-python/
 import fontstyle
 
+# import re to search for a pattern in a string
+import re 
+
 #################################################################################################
 # Functions
 
@@ -127,10 +130,29 @@ class AssistantWelcome():
         user_input_suggestion.user_suggestion(suggestion)
         
 
-    # greet the user with their name by both speaking and writing it out 
-    # use hour to greet with either morning, afternoon or evening
-    def greet_user(self):
-        pass
+    # greet the user with their name by both speaking and printing it out     
+    def greet_user(self, user_name):
+        """A method to greet the user by their name.
+
+        :param user_name: Input from the microphone for the user's name
+        :type user_name: str
+        """
+        # remove suggested pattern "my name is" from user_name so that only the user's name remains
+        username_stripped = user_name.strip("my name is")
+        # get the current time's hour
+        time = datetime.datetime.now().hour #int
+        # use the hour to greet with either morning, afternoon or evening
+        if time < 12:
+            print(f"Good morning {username_stripped}.")
+            self.assistant_speak(f"Good morning {username_stripped}.")
+
+        elif time == 12 or time < 18:
+            print(f"Good afternoon {username_stripped}.")
+            self.assistant_speak(f"Good afternoon {username_stripped}.")
+        
+        else:
+            print(f"Good evening {username_stripped}.")
+            self.assistant_speak(f"Good evening {username_stripped}.")
 
     ## ask the user how they are doing ##
 
@@ -206,8 +228,31 @@ class UserInput():
         print(fontstyle.apply(error_message, 'red/bold'))
 
     # ask the assistant what is the user's name
-    def check_user_name():
-        pass
+    def check_user_name(self, user_name):
+        """A method to check that the user said the suggested input followed by their name.
+
+        :param user_name: Name input received over the microphone, from the user.
+        :type user_name: str
+        """
+        while True:
+            # check if the user said their name according to the suggestion
+            # https://docs.python.org/3.11/library/re.html#re.search
+            # use conditional statements to check for if "My name is" in user_name        
+            # use regular expression to check for the pattern in the str
+            if re.search("my name is", user_name):
+                # call method for assistant to give a custom welcome
+                self.assistant.greet_user(user_name)
+                # break the loop 
+                break
+
+            # if the pattern is not found, call request_user_name() again
+            else:
+                self.user_error("Please use the suggested phrase before saying you name.")
+                self.assistant.assistant_speak("Please use the suggested phrase before saying you name.")
+                self.assistant.request_user_name()
+                user_name = self.user_speak()
+                # continue the loop
+                continue
 
 # code the various key words to listen for in a request
 
@@ -259,14 +304,22 @@ def main():
     user_input = UserInput(assistant_welcome)
 
     # call AssistantWelcome() methods
+    # greet user
     assistant_welcome.assistant_greeting()
+    # inform user of present conditions
     assistant_welcome.present_conditions() 
+
+    # request the user to input the name over the microphone
     assistant_welcome.request_user_name()
-    # call UserInput() methods ## need to save this audio as user name
+    # call UserInput() methods to save the audio as the user's name
     user_name = user_input.user_speak()
+
+    # call method to check if the user said their name
+    user_input.check_user_name(user_name)
     
-    # check if the user said their name according to the suggestion
-    #if "My name is" in user_name:
+
+    # call method to ask user how the assistant can help
+    # print out suggestions
         
 
     
