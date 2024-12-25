@@ -21,7 +21,7 @@ class WikiBot():
         self.driver.get(url="https://www.wikipedia.org/")
         self.driver.implicitly_wait(0.5)
         # locate search box by inspecting web page elements & copying xpath
-        # https://selenium-python.readthedocs.io/locating-elements.html#locating-elements
+        # https://selenium-python.readthedocs.io/locating-elements.html#locating-by-xpath
         search_box = self.driver.find_element(By.XPATH, '//*[@id="searchInput"]')
         # click on search box
         search_box.click()
