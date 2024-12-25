@@ -108,9 +108,9 @@ class AssistantWelcome():
         weather = "hot" ################################## incomplete
 
         # print the present conditions
-        print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")
+        print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}\n")
         # call assistant_speak to say the present conditions
-        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}\n\n")        
+        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")        
 
     # ask the user for their name
     def request_user_name(self):
@@ -120,8 +120,11 @@ class AssistantWelcome():
         self.assistant_speak("What is your name?")
         # include a suggestion for the user because these word will be checked
         suggestion = "Suggestion: My name is ...\n"
-        # call user_suggestion method to format output of suggestion
-        UserInput.user_suggestion(suggestion)
+        # call UserInput class's user_suggestion method to format output of suggestion
+        # put self as the argument because UserInput expects the assistant parameter
+        # - inside request_user_name, self refers to current AssitantWelcome instance that calls assistant_speak method
+        user_input_suggestion = UserInput(self)
+        user_input_suggestion.user_suggestion(suggestion)
         
 
     # greet the user with their name by both speaking and writing it out 
@@ -182,7 +185,7 @@ class UserInput():
                 continue
 
             except sr.RequestError as e:
-                error_message = f"Unable to request results from Google Speech Recognition service: {e}\n\n"
+                error_message = f"Unable to request results from Google Speech Recognition service: {e}\n"
                 # call method to print error message
                 self.user_error(error_message)
 
