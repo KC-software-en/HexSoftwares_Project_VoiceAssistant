@@ -63,8 +63,11 @@ def start_engine():
 # the class contains the methods that welcome the user & introduce the program
 class AssistantWelcome():
     # initialise AssistantWelcome() with ts engine
+    # 
     def __init__(self, engine):
         self.engine = engine
+        # place self as a parameter when calling an instance for the user_suggestion, UserInput needs access to AssistantWel
+        self.suggestion_format = UserInput(self).user_suggestion
 
     # create a method for the assistant to speak
     def assistant_speak(self, utterance):
@@ -127,8 +130,7 @@ class AssistantWelcome():
         # put self as the argument because UserInput expects the assistant parameter
         # - inside request_user_name, self refers to current AssitantWelcome instance that calls assistant_speak method
         user_input_suggestion = UserInput(self)
-        user_input_suggestion.user_suggestion(suggestion)
-        
+        user_input_suggestion.user_suggestion(suggestion)                
 
     # greet the user with their name by both speaking and printing it out     
     def greet_user(self, username_stripped):
@@ -150,12 +152,29 @@ class AssistantWelcome():
         
         else:
             print(f"Good evening {username_stripped}.")
-            self.assistant_speak(f"Good evening {username_stripped}.")
-
-    ## ask the user how they are doing ##
+            self.assistant_speak(f"Good evening {username_stripped}.")    
 
     # ask the user what they would like to do
+    def user_task_inquiry(self):
+        """A method where the assistant asks the user what task they want to perform.
 
+        :return: _description_
+        :rtype: _type_
+        """
+        # print out suggested task requests
+        suggestion = ("""Suggestions:
+                      What is my name?
+                      What is the weather?
+                      Search Wikipedia for...
+                      What are the latest news headlines?
+                    """)
+        # call UserInput's suggestion method to format output of suggestions
+        self.suggestion_format(suggestion) 
+        # print the assistant's question
+        self.assistant_speak("How can I assist you?")
+
+
+# create a class for the user's input
 class UserInput():
     # add assistant parameter to constructor
     def __init__(self, assistant):
@@ -165,6 +184,7 @@ class UserInput():
         # store the reference to AssistantWelcome() instance so that the speak method can be used later
         self.assistant = assistant
 
+    # define a method for the user to speak to the assistant
     def user_speak(self):
         """A method for the user to speak to the assistant
 
@@ -172,14 +192,13 @@ class UserInput():
         :rtype: str
         """
         # use a while loop that ends when Google understands the user's speech 
-
         while True:
             try: 
                 with sr.Microphone() as source:  
                     self.r.energy_threshold = 600  
                     # add a pause threshold - seconds of non-speaking audio before a phrase is considered complete
                     # https://github.com/Uberi/speech_recognition/blob/master/speech_recognition/__init__.py
-                    self.r.pause_threshold = 5            
+                    self.r.pause_threshold = 2.5            
                     # adjust for ambient noise
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
                     print("Calibrating for background noises...")
@@ -236,15 +255,17 @@ class UserInput():
         :param user_name: Name input received over the microphone, from the user.
         :type user_name: str
         """
-        # strip suggested word separately in case the use repeates the phrase
-        username_stripped = user_name.replace("my", "").replace("name", "").replace("is", "").strip()        
+        # replace suggested words separately in case the user repeates the phrase
+        # split() the str at the whitespaces then join the str again - resolve extra spaces in output, in the middle of str        
+        username_stripped = " ".join(user_name.replace("my", "").replace("name", "").replace("is", "").split())        
+        
         while True:
-
             # check if the user said their name according to the suggestion
             # https://docs.python.org/3.11/library/re.html#re.search
             # use conditional statements to check for if "My name is" in user_name        
             # use regular expression to check for the pattern in the str
-            if re.search("my name is", user_name):
+            # check if the stripped username is not empty
+            if re.search("my name is", user_name) and username_stripped != "":
                 # call method for assistant to give a custom welcome
                 self.assistant.greet_user(username_stripped)
                 # break the loop 
@@ -261,14 +282,7 @@ class UserInput():
                 # continue the loop
                 continue
 
-            # remove suggested pattern "my name is" from user_name so that only the user's name remains            
-            # check if the stripped username is empty
-            # added for if the user repeats suggested phrase
-            elif username_stripped == " ":
-                # call method to request the user's name again  
-                self.assistant.request_user_name()                          
-                user_name = self.user_speak()
-                continue
+            
 
             # check if the pattern is not found, call request_user_name() again
             else:
@@ -344,7 +358,12 @@ def main():
     
 
     # call method to ask user how the assistant can help
-    # print out suggestions
+    assistant_welcome.user_task_inquiry()
+
+    # call the method so that the user can say the task they want to do
+    user_task_request = user_input.user_speak()
+    
+    # check which task the user want then call its method
         
 
     
