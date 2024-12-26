@@ -31,6 +31,8 @@ class WikiBot():
         search_button = self.driver.find_element(By.XPATH, '//*[@id="search-form"]/fieldset/button/i')
         # click on search button to submit query
         search_button.click()
+        # close driver
+        self.driver.quit()
 
 
 
