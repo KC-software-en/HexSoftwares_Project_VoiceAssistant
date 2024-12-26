@@ -226,7 +226,7 @@ class UserInput():
                     return self.text
 
             except sr.UnknownValueError as e:   
-                error_message = f"Google Speech Recognition could not understand the audio for your name: {e}. Please try again.\n"            
+                error_message = f"Google Speech Recognition could not understand your audio over the microphone: {e}. Please try again.\n"            
                 # call method to print error message
                 self.user_error(error_message)
 
