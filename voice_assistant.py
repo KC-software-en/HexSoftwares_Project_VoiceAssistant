@@ -21,6 +21,9 @@ import re
 # import classes for automated web search
 from auto_web_tasks import WikiBot
 
+# import webbrowser
+import webbrowser
+
 #################################################################################################
 # Functions
 
@@ -169,6 +172,7 @@ class AssistantWelcome():
                       What is my name?
                       What is the weather?
                       Search Wikipedia for...
+                      Open Instagram
                       What are the latest news headlines?
                       Goodbye.
                     """)
@@ -307,6 +311,8 @@ class UserInput():
 # webbrowser.open
 # https://docs.python.org/3.11/library/webbrowser.html
 # https://www.askpython.com/python-modules/webbrowser-module
+def open_browser(url):
+    webbrowser.open(url)
 
 # open youtube to play a song
 
@@ -366,7 +372,7 @@ def main():
             assistant_welcome.user_task_inquiry()
             # call the method so that the user can say the task they want to do
             # format user input processed by Google Speech Recognition in lowecase
-            user_task_request = user_input.user_speak().lower()
+            user_task_request = (user_input.user_speak()).lower()
 
             # check which task the user want then call its method
             if "wikipedia" in user_task_request:
@@ -383,7 +389,18 @@ def main():
                 # call method to say that the assistant will search wikipedia
                 assistant_welcome.assistant_speak(f"Searching Wikipedia for {wiki_term}.")
                 # call the wiki_search method
-                wiki_info.wiki_search(wiki_term)                
+                first_paragraph = wiki_info.wiki_search(wiki_term)       
+                # print the first_paragraph of the wiki search result         
+                print(f"{first_paragraph}\n")
+                # call the assistant_speak so say the first_paragraph of the wiki search result
+                assistant_welcome.assistant_speak(f"{first_paragraph}")
+
+            # if the user wants to open instagram
+            elif "open instagram" in user_task_request:
+                # print out voice assistant opening insta
+                print("Opening Instagram...\n")
+                assistant_welcome.assistant_speak("Opening Instagram")
+                open_instagram()
 
             # if the user wants to end the voice assistant session
             elif "bye" in user_task_request:
