@@ -175,9 +175,10 @@ class AssistantWelcome():
                       What is my name?
                       What is the weather?
                       Search Wikipedia for...
-                      Open Instagram
-                      Open Google
+                      Open Instagram.
+                      Open Google.
                       Play...
+                      Tell me a dad joke.
                       What are the latest news headlines?
                       Goodbye.
                     """)
@@ -453,7 +454,14 @@ def main():
                 user_menu.open_youtube(youtube_term)
 
             # if the user wants to open Google
-            
+            elif "open google" in user_task_request:
+                # print out voice assistant opening Google
+                print("Opening Google...\n")
+                # call the assistant_speak to say YouTube is opening
+                assistant_welcome.assistant_speak("Opening Google")
+
+                # call the method to open google browser
+                user_menu.open_google()
 
             # if the user want a dad joke
             elif "dad joke" in user_task_request:
