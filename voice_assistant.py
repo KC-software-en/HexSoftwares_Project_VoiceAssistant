@@ -421,7 +421,9 @@ def main():
             elif "open instagram" in user_task_request:
                 # print out voice assistant opening insta
                 print("Opening Instagram...\n")
+                # call the assistant_speak to say Instagram is opening
                 assistant_welcome.assistant_speak("Opening Instagram")
+                # call method to open instagram
                 user_menu.open_instagram()
 
             # if the user wants to play a video in Youtube
