@@ -18,11 +18,14 @@ import fontstyle
 # import re to search for a pattern in a string
 import re 
 
-# import classes for automated web search
+# import classes for automated web search with Selenium
 from auto_web_tasks import WikiBot, YouTubeVideo
 
-# import webbrowser
+# import webbrowser to open web pages
 import webbrowser
+
+# import Joking
+import Joking
 
 #################################################################################################
 # Functions
@@ -306,6 +309,8 @@ class UserInput():
 class UserMenu():
     def __init__(self, user_input):
         self.user_input = user_input
+        # initiate an instance of Joking since its methods are called in UserMenu methods
+        ##self.joke = Joking()
 
     # open google 
     # https://pypi.org/project/rpaframework/
@@ -348,15 +353,20 @@ class UserMenu():
 
     # open VS code
 
-    # tell me a joke
+    # tell me a dad joke
     # https://pypi.org/project/Joking/
-
+    def dad_joke(self):
+        
+        # call Joking class' method for random dad jokes
+        dad_joke = Joking.random_dad_joke()
+        # return the joke
+        return dad_joke 
+        
     # latest news in the last 24 hours
     # https://newsapi.org/
     # datetime.now()
     # datetime.delta() https://www.geeksforgeeks.org/python-datetime-timedelta-class/
-
-    # listen for the user saying bye
+    
 
 #################################################################################################
 
@@ -436,12 +446,23 @@ def main():
 
                 # print out voice assistant opening insta
                 print("Opening YouTube...\n")
+                # call the assistant_speak to say YouTube is opening
                 assistant_welcome.assistant_speak("Opening YouTube")
 
                 # call the method to open youtube & play the video
                 user_menu.open_youtube(youtube_term)
 
             # if the user wants to open Google
+            
+
+            # if the user want a dad joke
+            elif "dad joke" in user_task_request:
+                # call the method for dad jokes
+                dad_joke = user_menu.dad_joke()
+                # print out the joke
+                print(f"Here's a dad joke:\n{dad_joke}\n")
+                # call method so that the assistant can say the joke
+                assistant_welcome.assistant_speak(f"Here's a dad joke: {dad_joke}")
 
             # if the user wants to end the voice assistant session
             elif "bye" in user_task_request:
