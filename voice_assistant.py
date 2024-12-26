@@ -300,54 +300,58 @@ class UserInput():
                 continue
             
 # code the various key words to listen for in a request
+# create a class for the user menu of suggested tasks the voice assistant can perform
+class UserMenu():
+    def __init__(self, user_input):
+        self.user_input = user_input
 
-# search google for an answer 
-# https://pypi.org/project/rpaframework/
-# https://rpaframework.org/
-# https://rpaframework.org/libraries/browser_playwright/
-# use playwright to automate a search alternatively
+    # search google for an answer 
+    # https://pypi.org/project/rpaframework/
+    # https://rpaframework.org/
+    # https://rpaframework.org/libraries/browser_playwright/
+    # use playwright to automate a search alternatively
 
-# request a browser to be opened
-# webbrowser.open
-# https://docs.python.org/3.11/library/webbrowser.html
-# https://www.askpython.com/python-modules/webbrowser-module
-def open_browser(url):
-    webbrowser.open(url)
+    # request a browser to be opened
+    # use webbrowser
+    # https://docs.python.org/3.11/library/webbrowser.html
+    # https://www.askpython.com/python-modules/webbrowser-module
+    def open_browser(url):
+        webbrowser.open(url)
 
-# open youtube to play a song
-def open_youtube(query):
-    # create an instance of YouTubeVideo class
-    youtube = YouTubeVideo()
-    # call the method to play a video
-    youtube.play_video(query)
+    # open youtube to play a song with selenium
+    # use imported method from auto_web_tasks.py
+    def open_youtube(query):
+        # create an instance of YouTubeVideo class
+        youtube = YouTubeVideo()
+        # call the method to play a video
+        youtube.play_video(query)
 
+    # say the date
 
-# say the date
+    # say the time
 
-# say the time
+    # say the weather
 
-# say the weather
+    # open instagram
+    def open_instagram():
+        # assign the url
+        # call the function to open insta in a brwoser with the url as the arg
+        url = 'https://www.instagram.com/'
+        open_browser(url)
 
-# open instagram
-def open_instagram():
-    # assign the url
-    # call the function to open insta in a brwoser with the url as the arg
-    url = 'https://www.instagram.com/'
-    open_browser(url)
+    # open python IDE
 
-# open python IDE
+    # open VS code
 
-# open VS code
+    # tell me a joke
+    # https://pypi.org/project/Joking/
 
-# tell me a joke
-# https://pypi.org/project/Joking/
+    # latest news in the last 24 hours
+    # https://newsapi.org/
+    # datetime.now()
+    # datetime.delta() https://www.geeksforgeeks.org/python-datetime-timedelta-class/
 
-# latest news in the last 24 hours
-# https://newsapi.org/
-# datetime.now()
-# datetime.delta() https://www.geeksforgeeks.org/python-datetime-timedelta-class/
-
-# listen for the user saying bye
+    # listen for the user saying bye
 
 #################################################################################################
 
@@ -376,6 +380,8 @@ def main():
     # return the name with the command removed
     user_name_isolated = user_input.check_user_name(user_name)
     
+    # create an instance of UserMenu
+    user_menu = UserMenu()
     while True:        
         # use defensive programming to check user request
         try:
@@ -384,7 +390,7 @@ def main():
             # call the method so that the user can say the task they want to do
             # format user input processed by Google Speech Recognition in lowecase
             user_task_request = (user_input.user_speak()).lower()
-
+            
             # check which task the user want then call its method
             if "wikipedia" in user_task_request:
                 # call an instance of the WikiBot class
@@ -411,7 +417,20 @@ def main():
                 # print out voice assistant opening insta
                 print("Opening Instagram...\n")
                 assistant_welcome.assistant_speak("Opening Instagram")
-                open_instagram()
+                user_menu.open_instagram()
+
+            elif "play" in user_task_request:
+                # extract term to be searched from user_task_request
+                # remove "search wikipedia for" from the user_task_request input str
+                # remove any extra whitespaces
+                youtube_term = user_task_request.replace("play", "").strip()
+
+                # print out voice assistant opening insta
+                print("Opening YouTube...\n")
+                assistant_welcome.assistant_speak("Opening YouTube")
+
+                # call method to open youtube & play the video
+                user_menu.open_youtube(youtube_term)
 
             # if the user wants to end the voice assistant session
             elif "bye" in user_task_request:
