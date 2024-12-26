@@ -14,7 +14,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 # import expected_conditions
 from selenium.webdriver.support import expected_conditions as EC
 
+# import time to give YouTube time to play its videos
 import time
+
 ###########################################################################
 ###########################################################################
 
@@ -74,8 +76,38 @@ class YouTubeVideo():
         :rtype: int
         """
         # convert time to seconds
-        # split the str at ':' creating a list assigned to the tuple
-        hours, minutes, seconds = map(int, video_duration_text.split(':'))
+        # split the str at ':' creating a list of sections in the duration    
+        duration_sections = video_duration_text.split(":")
+
+        # use try-except block to calculate seconds
+        try:            
+            # initialise the times in the event some videos don't have certain variable, ensuring no calculation error
+            hours, minutes, seconds = 0, 0, 0
+            
+            # if the video has hours, minutes & seconds
+            if len(duration_sections) == 3:
+                # assign duration_sections to the tuple
+                hours, minutes, seconds = map(int, duration_sections)
+
+            # if the video has minutes & seconds
+            elif len(duration_sections) == 2:
+                # assign duration_sections to the tuple
+                minutes, seconds = map(int, duration_sections)
+            
+            # if the video has seconds
+            elif len(duration_sections) == 1:
+                # assign duration_sections to second
+                seconds = int(duration_sections)
+
+            # print error if the format doe not have sections for the calculations
+            else:
+                print("Invalid format for duration.")
+        
+        # exception handling for error before adding the int
+        except Exception as e:
+            print(f"Error calculating video duration: {e}.")
+            return None
+
         # calculate the seconds for the video duration
         video_duration_seconds = (hours * 3600) + (minutes * 60) + seconds
         # add extra time for adverts
