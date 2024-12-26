@@ -173,6 +173,8 @@ class AssistantWelcome():
                       What is the weather?
                       Search Wikipedia for...
                       Open Instagram
+                      Open Google
+                      Play...
                       What are the latest news headlines?
                       Goodbye.
                     """)
