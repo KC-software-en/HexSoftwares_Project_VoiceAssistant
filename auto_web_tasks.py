@@ -31,8 +31,13 @@ class WikiBot():
         search_button = self.driver.find_element(By.XPATH, '//*[@id="search-form"]/fieldset/button/i')
         # click on search button to submit query
         search_button.click()
+        # locate the 1st paragraph of the wiki search result by its xpath
+        # use .text property to extract the actual text content from web element
+        first_paragraph = self.driver.find_element(By.XPATH, '//*[@id="mw-content-text"]/div[1]/p[2]').text        
         # close driver
         self.driver.quit()
+        # return the text of the 1st paragraph for the search result
+        return first_paragraph
 
 
 
