@@ -320,12 +320,12 @@ class UserMenu():
     # use webbrowser
     # https://docs.python.org/3.11/library/webbrowser.html
     # https://www.askpython.com/python-modules/webbrowser-module
-    def open_browser(url):
+    def open_browser(self, url):
         webbrowser.open(url)
 
     # open youtube to play a song with selenium
     # use imported method from auto_web_tasks.py
-    def open_youtube(query):
+    def open_youtube(self, query):
         # create an instance of YouTubeVideo class
         youtube = YouTubeVideo()
         # call the method to play a video
@@ -338,11 +338,11 @@ class UserMenu():
     # say the weather
 
     # open instagram
-    def open_instagram():
+    def open_instagram(self):
         # assign the url
         # call the function to open insta in a brwoser with the url as the arg
         url = 'https://www.instagram.com/'
-        open_browser(url)
+        self.open_browser(url)
 
     # open python IDE
 
@@ -386,7 +386,8 @@ def main():
     user_name_isolated = user_input.check_user_name(user_name)
     
     # create an instance of UserMenu
-    user_menu = UserMenu()
+    user_menu = UserMenu(user_input)
+
     while True:        
         # use defensive programming to check user request
         try:
@@ -437,7 +438,7 @@ def main():
                 print("Opening YouTube...\n")
                 assistant_welcome.assistant_speak("Opening YouTube")
 
-                # call method to open youtube & play the video
+                # call the method to open youtube & play the video
                 user_menu.open_youtube(youtube_term)
 
             # if the user wants to open Google
@@ -456,8 +457,8 @@ def main():
                 continue
 
         # check that its the term the user wants to search
-        except:
-            print("There was an error.")
+        except Exception as e:
+            print(f"There was an error {e}. Please try again.\n")
             assistant_welcome.assistant_speak("There was an error. Please try again.")
             
 
