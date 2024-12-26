@@ -379,9 +379,9 @@ def main():
                 wiki_term = user_task_request.replace("search wikipedia for", "").strip()                
 
                 # print out the voice assistant saying they will search wikipedia
-                print(f"Searching Wikipedia for {wiki_term}")
+                print(f"Searching Wikipedia for {wiki_term}...\n")
                 # call method to say that the assistant will search wikipedia
-                assistant_welcome.assistant_speak(f"Searching Wikipedia for {wiki_term}")
+                assistant_welcome.assistant_speak(f"Searching Wikipedia for {wiki_term}.")
                 # call the wiki_search method
                 wiki_info.wiki_search(wiki_term)                
 
