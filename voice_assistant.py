@@ -47,35 +47,36 @@ def start_engine():
         engine = ts.init()
         # slow down the rate of speech
         # https://pyttsx3.readthedocs.io/en/stable/engine.html#pyttsx3.engine.Engine.getProperty
-        # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-speech-rate
-        rate = engine.getProperty("rate") 
-        #print(f"rate:{rate}")
+        # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-speech-rate                
         engine.setProperty("rate", 180)    
         # set the voice to USA Zira
         # https://pyttsx3.readthedocs.io/en/stable/engine.html#changing-voices
         voices = engine.getProperty("voices")    
         engine.setProperty("voice", voices[1].id)    
+        # return engine
         return engine
 
-    # Raise errors	
+    # Raise errors	    
     # ImportError – When the requested driver is not found
     except ImportError as e:
+        # print error
         print(f"There was an error importing text-to-speech engine: {e}")
         raise ImportError("Check that pyttsx3 was installed & try again.")
 
-    # RuntimeError – When the driver fails to initialise
+    # Raise RuntimeError – When the driver fails to initialise
     except RuntimeError as e:
+        # print error
         print(f"There was an error initiating text-to-speech engine: {e}")
         raise RuntimeError("There was a problem initiating pyttsx3.")
 
-# create a  class) methods from the base class, StartEngine()
+# create class methods from the base class, StartEngine()
 # the class contains the methods that welcome the user & introduce the program
 class AssistantWelcome():
-    # initialise AssistantWelcome() with ts engine
-    # 
+    # initialise AssistantWelcome() with ts engine    
     def __init__(self, engine):
         self.engine = engine
-        # place self as a parameter when calling an instance for the user_suggestion, UserInput needs access to AssistantWel
+        # place self as a parameter when calling an instance for the user_suggestion, 
+        # UserInput needs access to AssistantWelcome
         self.suggestion_format = UserInput(self).user_suggestion
 
     # create a method for the assistant to speak
@@ -103,8 +104,10 @@ class AssistantWelcome():
         # call assistant_speak() to say the greeting
         self.assistant_speak("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")        
 
-    # tell the user the the date, time 
+    # tell the user the the date & time 
     def present_conditions(self):
+        """A method to collect the day, date & time. 
+        """
         # get the current time
         # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
         time = datetime.datetime.now().strftime("%I:%M%p")
@@ -127,10 +130,14 @@ class AssistantWelcome():
     def request_user_name(self):
         """A method where the assistant asks for the user's name.
         """
+        # print the assistant's request for the user's name.
         print("What is your name?")
+        # call the assistant_speak method for the assistant to ask the user's name.
         self.assistant_speak("What is your name?")
-        # include a suggestion for the user because these word will be checked
+        # include a suggestion for the user because these words will be checked
         suggestion = "Suggestion: My name is ...\n"
+
+        # create an instance of UserInput
         # call UserInput class's user_suggestion method to format output of suggestion
         # put self as the argument because UserInput expects the assistant parameter
         # - inside request_user_name, self refers to current AssitantWelcome instance that calls assistant_speak method
@@ -147,24 +154,24 @@ class AssistantWelcome():
         # get the current time's hour
         time = datetime.datetime.now().hour #int
         # use the hour to greet with either morning, afternoon or evening
+        # if morning
         if time < 12:
             print(f"Good morning {username_stripped}.")
             self.assistant_speak(f"Good morning {username_stripped}.")
 
+        # if afternoon
         elif time == 12 or time < 18:
             print(f"Good afternoon {username_stripped}.")
             self.assistant_speak(f"Good afternoon {username_stripped}.")
         
+        # if evening
         else:
             print(f"Good evening {username_stripped}.\n")
             self.assistant_speak(f"Good evening {username_stripped}.")    
 
     # ask the user what they would like to do
     def user_task_inquiry(self):
-        """A method where the assistant asks the user what task they want to perform.
-
-        :return: _description_
-        :rtype: _type_
+        """ A method where the assistant asks the user what task they want to perform.
         """
         # print out suggested task requests
         suggestion = ("""Suggestions:                                            
@@ -172,15 +179,14 @@ class AssistantWelcome():
                       Open Instagram.
                       Open Google.
                       Play...
-                      Tell me a dad joke.
-                      What are the latest news headlines?
+                      Tell me a dad joke.                      
                       Goodbye.
                     """)
+        
         # call UserInput's suggestion method to format output of suggestions
         self.suggestion_format(suggestion) 
         # print the assistant's question
         self.assistant_speak("How can I assist you?")
-
 
 # create a class for the user's input
 class UserInput():
@@ -194,28 +200,34 @@ class UserInput():
 
     # define a method for the user to speak to the assistant
     def user_speak(self):
-        """A method for the user to speak to the assistant
+        """A method for the user to speak to the assistant.
 
         :return: Return the text that Google thinks the user said.
         :rtype: str
         """
         # use a while loop that ends when Google understands the user's speech 
         while True:
+            # use defensive programming with try-except blocks
             try: 
+                # initialise the microphone as the audio source
                 with sr.Microphone() as source:  
+                    # set the energy threshold for a quiet environment (set high e.g. 3000 for noisy)
                     self.r.energy_threshold = 600  
                     # add a pause threshold - seconds of non-speaking audio before a phrase is considered complete
                     # https://github.com/Uberi/speech_recognition/blob/master/speech_recognition/__init__.py
                     self.r.pause_threshold = 2.5            
-                    # adjust for ambient noise
+                    # adjust for ambient noise 
+                    # print to let user know about ambient noise calibration
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/calibrate_energy_threshold.py
                     print("Calibrating for background noises...")
                     self.r.adjust_for_ambient_noise(source, 1.5)
 
+                    # print to let user know the assistant is listening
                     # listen for audio from the microphone & save it
                     print("Listening...")
                     self.assistant.assistant_speak("I'm listening...")
                     self.audio = self.r.listen(source)
+
                     # send audio to Google API engine to convert it to text
                     # use defensive programming with try-except blocks to save audio
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/audio_transcribe.py
@@ -225,6 +237,7 @@ class UserInput():
                     # return will break the loop
                     return self.text
 
+            # except UnknownValueError then continue the loop
             except sr.UnknownValueError as e:   
                 error_message = f"Google Speech Recognition could not understand your audio over the microphone: {e}. Please try again.\n"            
                 # call method to print error message
@@ -235,6 +248,7 @@ class UserInput():
                 # continue loop to try again
                 continue
 
+            # except sr.RequestError then continue the loop
             except sr.RequestError as e:
                 error_message = f"Unable to request results from Google Speech Recognition service: {e}\n"
                 # call method to print error message
@@ -246,12 +260,21 @@ class UserInput():
                 # continue loop to try again
                 continue            
 
+    # define a method to format the suggestion for the user
     def user_suggestion(self, suggestion):
+        """A method to format the suggestion for the user.
+
+        :param suggestion: A phrase the assistent listens for to perform a command.
+        :type suggestion: str
+        """
         # use fontstyle to format the suggestion in blue, italic
         # print the suggestion 
         print(fontstyle.apply(suggestion, 'Italic/cyan'))
 
-    def user_error(self, error_message):        
+    # define a method to format the error for the user
+    def user_error(self, error_message):   
+        """A method to format the error for the user.
+        """         
         # use fontstyle to format the error in bold, red
         # print the error message
         print(fontstyle.apply(error_message, 'red/bold'))
@@ -267,6 +290,7 @@ class UserInput():
         # split() the str at the whitespaces then join the str again - resolve extra spaces in output, in the middle of str        
         username_stripped = " ".join(user_name.replace("my", "").replace("name", "").replace("is", "").split())        
         
+        # use a loop to ensure to username was received
         while True:
             # check if the user said their name according to the suggestion
             # https://docs.python.org/3.11/library/re.html#re.search
@@ -281,41 +305,44 @@ class UserInput():
 
             # check if there is no name found after the suggested phrase "my name is"
             elif user_name == "my name is":
+                # call method to format error message
                 self.user_error("The Google Speech Recognition service did not catch your name. Please try again")
+                # call assistant_speak method to let the assistant say the error
                 self.assistant.assistant_speak(
                     "Your name is not present in Google Speech Recognition service. Please try again.")
+                
                 # call request_user_name() again
                 self.assistant.request_user_name()
+                # call method to let the user speak again
                 user_name = self.user_speak()
                 # continue the loop
                 continue
             
             # check if the pattern is not found, call request_user_name() again
             else:
+                # call method to format error message
                 self.user_error("Please use the suggested phrase before saying your name.")
+                # call assistant_speak method to let the assistant say the error
                 self.assistant.assistant_speak("Please use the suggested phrase before saying you name.")
+                
+                # call request_user_name() again
                 self.assistant.request_user_name()
                 user_name = self.user_speak()
                 # continue the loop
                 continue
             
-# code the various key words to listen for in a request
 # create a class for the user menu of suggested tasks the voice assistant can perform
 class UserMenu():
     def __init__(self, user_input):
-        self.user_input = user_input
-        # initiate an instance of Joking since its methods are called in UserMenu methods
-        ##self.joke = Joking()
+        self.user_input = user_input        
 
-    # open google 
-    # https://pypi.org/project/rpaframework/
-    # https://rpaframework.org/
-    # https://rpaframework.org/libraries/browser_playwright/
-    # use playwright to automate a search alternatively
+    # open google     
     def open_google(self):
         """A method to open Google in a browser.
         """
+        # set the url
         url = 'https://www.google.com/'
+        # call method to open browser with a url argument
         self.open_browser(url)
 
     # request a browser to be opened
@@ -328,6 +355,7 @@ class UserMenu():
         :param url: The URL of the user's choosing.
         :type url: str
         """
+        # call method to open browser with webbrowser
         webbrowser.open(url)
 
     # open youtube to play a song with selenium
@@ -348,7 +376,7 @@ class UserMenu():
         """A method to open instagram in a browser.
         """
         # assign the url
-        # call the function to open insta in a brwoser with the url as the arg
+        # call the function to open instagram in a browser with the url as the arg
         url = 'https://www.instagram.com/'
         self.open_browser(url)    
 
@@ -371,6 +399,7 @@ class UserMenu():
 def main():
     """The main function to run the voice assistant.
     """
+    # create an instance of start_engine
     engine = start_engine()
     # create an instance of AssistantWelcome()
     assistant_welcome = AssistantWelcome(engine)
@@ -397,16 +426,22 @@ def main():
     # create an instance of UserMenu
     user_menu = UserMenu(user_input)
 
+    # instruct the user on how to use the voice assistant
+    print("Select an option from the following suggestions or exit the menu with 'Goodbye'")
+    assistant_welcome.assistant_speak("Select an option from the following suggestions or exit the menu with a 'Goodbye'.")
+
+    # use a loop to use the menu until the user says goodbye to exit the voice assistant
     while True:        
         # use defensive programming to check user request
         try:
             # call method to ask user how the assistant can help
             assistant_welcome.user_task_inquiry()
             # call the method so that the user can say the task they want to do
-            # format user input processed by Google Speech Recognition in lowecase
+            # format user input processed by Google Speech Recognition in lowercase
             user_task_request = (user_input.user_speak()).lower()
             
-            # check which task the user want then call its method
+            # check which task the user wants with the various keywords to listen for in a request
+            # then call its relevant method
             if "wikipedia" in user_task_request:
                 # call an instance of the WikiBot class
                 wiki_info = WikiBot()                
@@ -461,7 +496,7 @@ def main():
                 # call the method to open google browser
                 user_menu.open_google()
 
-            # if the user want a dad joke
+            # if the user wants a dad joke
             elif "dad joke" in user_task_request:
                 # call the method for dad jokes
                 dad_joke = user_menu.dad_joke()
@@ -475,9 +510,10 @@ def main():
                 # print out the assistant saying goodbye
                 print(f"Goodbye {user_name_isolated}")
                 # call assistant_speak method to say bye
-                assistant_welcome.assistant_speak(f"Goodbye {user_name_isolated}")
+                assistant_welcome.assistant_speak(f"Goodbye {user_name_isolated}\n")
                 break
 
+            # if the voice assistant did not recognise a request
             else:
                 print("I did not catch that. Please try again.")
                 assistant_welcome.assistant_speak("I did not catch that. Please try again.")
@@ -488,9 +524,9 @@ def main():
             print(f"There was an error {e}. Please try again.\n")
             assistant_welcome.assistant_speak("There was an error. Please try again.")
             
-
+        # finally print a closing statement upon exit
         finally:
-            pass
+            print("Thank you for using the voice assistant!\n")
 
     
         
