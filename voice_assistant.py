@@ -323,6 +323,11 @@ def open_browser(url):
 # say the weather
 
 # open instagram
+def open_instagram():
+    # assign the url
+    # call the function to open insta in a brwoser with the url as the arg
+    url = 'https://www.instagram.com/'
+    open_browser(url)
 
 # open python IDE
 
