@@ -18,6 +18,9 @@ import fontstyle
 # import re to search for a pattern in a string
 import re 
 
+# import classes for automated web search
+from auto_web_tasks import WikiBot
+
 #################################################################################################
 # Functions
 
@@ -151,7 +154,7 @@ class AssistantWelcome():
             self.assistant_speak(f"Good afternoon {username_stripped}.")
         
         else:
-            print(f"Good evening {username_stripped}.")
+            print(f"Good evening {username_stripped}.\n")
             self.assistant_speak(f"Good evening {username_stripped}.")    
 
     # ask the user what they would like to do
@@ -167,6 +170,7 @@ class AssistantWelcome():
                       What is the weather?
                       Search Wikipedia for...
                       What are the latest news headlines?
+                      Goodbye.
                     """)
         # call UserInput's suggestion method to format output of suggestions
         self.suggestion_format(suggestion) 
@@ -212,7 +216,7 @@ class UserInput():
                     # use defensive programming with try-except blocks to save audio
                     # https://github.com/Uberi/speech_recognition/blob/master/examples/audio_transcribe.py
                     self.text = self.r.recognize_google(self.audio)
-                    #try:
+                    # print out the text Google recognised
                     print(f"Google thinks you said: \"{self.text}\"\n\n")
                     # return will break the loop
                     return self.text
@@ -269,7 +273,7 @@ class UserInput():
                 # call method for assistant to give a custom welcome
                 self.assistant.greet_user(username_stripped)
                 # break the loop 
-                break
+                return username_stripped
 
             # check if there is no name found after the suggested phrase "my name is"
             elif user_name == "my name is":
@@ -281,9 +285,7 @@ class UserInput():
                 user_name = self.user_speak()
                 # continue the loop
                 continue
-
             
-
             # check if the pattern is not found, call request_user_name() again
             else:
                 self.user_error("Please use the suggested phrase before saying your name.")
@@ -354,16 +356,54 @@ def main():
     user_name = user_input.user_speak()
 
     # call method to check if the user said their name
-    user_input.check_user_name(user_name)
+    # return the name with the command removed
+    user_name_isolated = user_input.check_user_name(user_name)
     
+    while True:        
+        # use defensive programming to check user request
+        try:
+            # call method to ask user how the assistant can help
+            assistant_welcome.user_task_inquiry()
+            # call the method so that the user can say the task they want to do
+            # format user input processed by Google Speech Recognition in lowecase
+            user_task_request = user_input.user_speak().lower()
 
-    # call method to ask user how the assistant can help
-    assistant_welcome.user_task_inquiry()
+            # check which task the user want then call its method
+            if "wikipedia" in user_task_request:
+                # call an instance of the WikiBot class
+                wiki_info = WikiBot()                
 
-    # call the method so that the user can say the task they want to do
-    user_task_request = user_input.user_speak()
+                # extract term to be searched from user_task_request
+                # remove "search wikipedia for" from the user_task_request input str
+                # remove any extra whitespaces
+                wiki_term = user_task_request.replace("search wikipedia for", "").strip()                
+
+                # call the wiki_search method
+                wiki_info.wiki_search(wiki_term)                
+
+            # if the user wants to end the voice assistant session
+            elif "bye" in user_task_request:
+                # print out the assistant saying goodbye
+                print(f"Goodbye {user_name_isolated}")
+                # call assistant_speak method to say bye
+                assistant_welcome.assistant_speak(f"Goodbye {user_name_isolated}")
+                break
+
+            else:
+                print("I did not catch that. Please try again.")
+                assistant_welcome.assistant_speak("I did not catch that. Please try again.")
+                continue
+
+        # check that its the term the user wants to search
+        except:
+            print("There was an error.")
+            assistant_welcome.assistant_speak("There was an error. Please try again.")
+            
+
+        finally:
+            pass
+
     
-    # check which task the user want then call its method
         
 
     
