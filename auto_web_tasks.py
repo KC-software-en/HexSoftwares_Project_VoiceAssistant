@@ -97,16 +97,20 @@ class YouTubeVideo():
             # if the video has seconds
             elif len(duration_sections) == 1:
                 # assign duration_sections to second
-                seconds = int(duration_sections)
+                # access the index (the 1st & only number in the list)
+                seconds = int(duration_sections[0])
 
             # print error if the format doe not have sections for the calculations
             else:
                 print("Invalid format for duration.")
+                # return a default of 30 seconds
+                return 30
         
         # exception handling for error before adding the int
         except Exception as e:
             print(f"Error calculating video duration: {e}.")
-            return None
+            # return a default of 30 seconds
+            return 30
 
         # calculate the seconds for the video duration
         video_duration_seconds = (hours * 3600) + (minutes * 60) + seconds
