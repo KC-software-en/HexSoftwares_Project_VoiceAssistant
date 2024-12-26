@@ -305,11 +305,14 @@ class UserMenu():
     def __init__(self, user_input):
         self.user_input = user_input
 
-    # search google for an answer 
+    # open google 
     # https://pypi.org/project/rpaframework/
     # https://rpaframework.org/
     # https://rpaframework.org/libraries/browser_playwright/
     # use playwright to automate a search alternatively
+    def open_google(self):
+        url = 'https://www.google.com/'
+        self.open_browser(url)
 
     # request a browser to be opened
     # use webbrowser
@@ -419,6 +422,7 @@ def main():
                 assistant_welcome.assistant_speak("Opening Instagram")
                 user_menu.open_instagram()
 
+            # if the user wants to play a video in Youtube
             elif "play" in user_task_request:
                 # extract term to be searched from user_task_request
                 # remove "search wikipedia for" from the user_task_request input str
@@ -431,6 +435,8 @@ def main():
 
                 # call method to open youtube & play the video
                 user_menu.open_youtube(youtube_term)
+
+            # if the user wants to open Google
 
             # if the user wants to end the voice assistant session
             elif "bye" in user_task_request:
