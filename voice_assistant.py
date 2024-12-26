@@ -19,7 +19,7 @@ import fontstyle
 import re 
 
 # import classes for automated web search
-from auto_web_tasks import WikiBot
+from auto_web_tasks import WikiBot, YouTubeVideo
 
 # import webbrowser
 import webbrowser
@@ -315,6 +315,12 @@ def open_browser(url):
     webbrowser.open(url)
 
 # open youtube to play a song
+def open_youtube(query):
+    # create an instance of YouTubeVideo class
+    youtube = YouTubeVideo()
+    # call the method to play a video
+    youtube.play_video(query)
+
 
 # say the date
 
