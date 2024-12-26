@@ -123,6 +123,5 @@ class YouTubeVideo():
             # close driver        
             self.driver.quit()
 
-youtube = YouTubeVideo()
-youtube.play_video("Christmas songs")
+
 
