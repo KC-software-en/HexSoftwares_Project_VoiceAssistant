@@ -103,7 +103,7 @@ class AssistantWelcome():
         # call assistant_speak() to say the greeting
         self.assistant_speak("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")        
 
-    # tell the user the the date, time and weather where by the user
+    # tell the user the the date, time 
     def present_conditions(self):
         # get the current time
         # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
@@ -118,14 +118,10 @@ class AssistantWelcome():
         date = datetime.date.today().strftime("%d")
         month = datetime.date.today().strftime("%B")
 
-        # get the weather
-        # https://openweathermap.org/api
-        weather = "hot" ################################## incomplete
-
         # print the present conditions
-        print(f"It is {time} on {day}, {date} of {month}. The weather is {weather}\n")
+        print(f"It is {time} on {day}, {date} of {month}.\n")
         # call assistant_speak to say the present conditions
-        self.assistant_speak(f"It is {time} on {day}, {date} of {month}. The weather is {weather}")        
+        self.assistant_speak(f"It is {time} on {day}, {date} of {month}.")        
 
     # ask the user for their name
     def request_user_name(self):
@@ -171,9 +167,7 @@ class AssistantWelcome():
         :rtype: _type_
         """
         # print out suggested task requests
-        suggestion = ("""Suggestions:
-                      What is my name?
-                      What is the weather?
+        suggestion = ("""Suggestions:                                            
                       Search Wikipedia for...
                       Open Instagram.
                       Open Google.
@@ -319,6 +313,8 @@ class UserMenu():
     # https://rpaframework.org/libraries/browser_playwright/
     # use playwright to automate a search alternatively
     def open_google(self):
+        """A method to open Google in a browser.
+        """
         url = 'https://www.google.com/'
         self.open_browser(url)
 
@@ -327,52 +323,54 @@ class UserMenu():
     # https://docs.python.org/3.11/library/webbrowser.html
     # https://www.askpython.com/python-modules/webbrowser-module
     def open_browser(self, url):
+        """A method that opens a specific URL in a browser.
+
+        :param url: The URL of the user's choosing.
+        :type url: str
+        """
         webbrowser.open(url)
 
     # open youtube to play a song with selenium
     # use imported method from auto_web_tasks.py
     def open_youtube(self, query):
+        """A method open youtube & play a video.
+
+        :param query: The search term for the YouTube search results.
+        :type query: str
+        """
         # create an instance of YouTubeVideo class
         youtube = YouTubeVideo()
         # call the method to play a video
-        youtube.play_video(query)
-
-    # say the date
-
-    # say the time
-
-    # say the weather
+        youtube.play_video(query)    
 
     # open instagram
     def open_instagram(self):
+        """A method to open instagram in a browser.
+        """
         # assign the url
         # call the function to open insta in a brwoser with the url as the arg
         url = 'https://www.instagram.com/'
-        self.open_browser(url)
-
-    # open python IDE
-
-    # open VS code
+        self.open_browser(url)    
 
     # tell me a dad joke
     # https://pypi.org/project/Joking/
     def dad_joke(self):
-        
+        """A method to fetch a random dad joke.
+
+        :return: Return a random dad joke.
+        :rtype: str
+        """
         # call Joking class' method for random dad jokes
         dad_joke = Joking.random_dad_joke()
         # return the joke
         return dad_joke 
-        
-    # latest news in the last 24 hours
-    # https://newsapi.org/
-    # datetime.now()
-    # datetime.delta() https://www.geeksforgeeks.org/python-datetime-timedelta-class/
-    
-
+                    
 #################################################################################################
 
 # Main code
 def main():
+    """The main function to run the voice assistant.
+    """
     engine = start_engine()
     # create an instance of AssistantWelcome()
     assistant_welcome = AssistantWelcome(engine)
