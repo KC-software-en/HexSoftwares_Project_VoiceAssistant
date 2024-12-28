@@ -1,6 +1,9 @@
 # instructions for video
 instructions.txt
 
+# json response for current weather
+cape_town_weather.txt
+
 # Django #
 *.log
 *.pot
