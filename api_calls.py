@@ -33,7 +33,11 @@ class WeatherApiCalls():
                 continue
 
     def call_coord_api(self):
-        
+        """A method that calls the OpenWeatherMap.org API & fetches the co-ordinates for Cape Town.
+
+        :return: Return the JSON response for Cape Town's co-ordinates.
+        :rtype: dict
+        """
         # name of city
         city_name = 'Cape Town'
         # no. of locations returned in API response
@@ -68,7 +72,11 @@ class WeatherApiCalls():
     # {lat}{lon}{part}{api key} respectively
     # place co-ordinates of city, exlcude unwanted data, insert personal API key generated after subscribing to One Call API 3.0
     def call_weather_api(self):  
-              
+        """A method that calls the OpenWeatherMap.org API & fetches the weather for Cape Town.
+
+        :return: Return the JSON response for Cape Town's weather.
+        :rtype: dict
+        """        
         latitude = -33.9288301
         longitude = 18.4172197
         units = 'metric'
@@ -100,7 +108,7 @@ class WeatherApiCalls():
             print(error_message)
             return None
 
-# derived/subclass of WeatherApiCalls
+# create derived/subclass of WeatherApiCalls to get items from the json_response
 class CurrentConditions(WeatherApiCalls):
     def __init__(self):
         # return a tempory object of the parent class so that its methods can be called
@@ -108,6 +116,11 @@ class CurrentConditions(WeatherApiCalls):
 
     # create a method to get the current temperature
     def temperature(self):
+        """A method that returns the current temperature in Cape Town.
+
+        :return: Return the temperature in degrees Celsius.
+        :rtype: int
+        """
         # call the method to collect json data for the weather in cape town
         json_response = super().call_weather_api() 
         # retrieve the temperature float from the json response dictionary with get()  
@@ -120,6 +133,11 @@ class CurrentConditions(WeatherApiCalls):
     
     # create a method to get the weather description
     def weather_description(self):
+        """A method that returns the current weather description in Cape Town.
+
+        :return: Return the phrase that describes present weather conditions.
+        :rtype: str
+        """
         # call the method to collect json data for the weather in cape town
         json_response = super().call_weather_api() 
         # retrieve the description from the json response by indexing the dictionary
@@ -130,5 +148,5 @@ class CurrentConditions(WeatherApiCalls):
         return description
 
 # call method to find the location of selected city - cape town
-# comment out coordinate after initial method was called because it does not need repetition       
+# comment out coordinates after initial method was called because it does not need repetition       
 # coordinates = weather.call_coord_api()
