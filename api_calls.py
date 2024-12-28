@@ -4,15 +4,36 @@ import requests
 # import json to work with the data retrieved from the openweathermap.org API
 import json  
 
+# import load_dotenv to load environment variables from a .env file
+from dotenv import load_dotenv
+
+# import os to access environment variables
+import os
+
 #####################################################################################################################
 
-# parent class that makes API call to openweathermap
+# define a parent class that makes API calls to openweathermap
 class WeatherApiCalls():    
     def __init__(self):
-        # put in env file ###################
-        self.api_key = 'fccc12b66bb2eee64c79eb57ac4503cf'
+        # put api key in .env file
+        # load api key from .env file
+        load_dotenv()
+        # use try-except defense in a loop to retrieve the API key
+        while True:
+            # try to fetch the environment variable for weather
+            # break the loop
+            try:
+                self.api_key = os.getenv('WEATHER_API_KEY')
+                break
+            # except if the environment variable was not found
+            # continue loop
+            # then check the .env file to see it's there
+            except KeyError as e:
+                print(f"{e} \nWeather API key not found in .env file.")
+                continue
 
     def call_coord_api(self):
+        
         # name of city
         city_name = 'Cape Town'
         # no. of locations returned in API response
@@ -46,12 +67,14 @@ class WeatherApiCalls():
     # make API call to OpenWeatherMap.org to get access to current weather
     # {lat}{lon}{part}{api key} respectively
     # place co-ordinates of city, exlcude unwanted data, insert personal API key generated after subscribing to One Call API 3.0
-    def call_weather_api(self):        
+    def call_weather_api(self):  
+              
         latitude = -33.9288301
         longitude = 18.4172197
+        units = 'metric'
         exclude = 'minutely,hourly,daily,alerts'
-        ##weather_api_call = f'https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&exclude={exclude}&appid={self.api_key}'
-        weather_api_call = 'https://api.openweathermap.org/data/3.0/onecall?lat=-33.9288301&lon=18.4172197&units=metric&appid=fccc12b66bb2eee64c79eb57ac4503cf'
+        weather_api_call = f'https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&{units}&exclude={exclude}&appid={self.api_key}'
+        ##weather_api_call = 'https://api.openweathermap.org/data/3.0/onecall?lat=-33.9288301&lon=18.4172197&units=metric&appid=fccc12b66bb2eee64c79eb57ac4503cf'
 
         # store url in a variable as a json response
         response = requests.get(weather_api_call)
@@ -59,8 +82,7 @@ class WeatherApiCalls():
         # check if the get request was successful
         # parse the JSON content of the response using the .json() method
         try:
-            ##if response.status_code == 200:
-            print(f"Status code:{response.status_code}")
+            # with a status code 200, the data can be parsed with json()            
             json_response = response.json()
 
             # write current weather for the city to a json file
@@ -107,16 +129,6 @@ class CurrentConditions(WeatherApiCalls):
         # return the description
         return description
 
-# create an instance of WeatherApiCalls class
-##weather = WeatherApiCalls() 
-
 # call method to find the location of selected city - cape town
 # comment out coordinate after initial method was called because it does not need repetition       
 # coordinates = weather.call_coord_api()
-
-# create an instance of CurrentConditions class
-# pass the instance of WeatherApiCalls class as the argument
-##current_weather = CurrentConditions(weather)
-# call method to retrieve the current weather in cape town
-##current_temperature = current_weather.temperature
-##weather_description = current_weather.weather_description
