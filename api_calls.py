@@ -82,14 +82,15 @@ class WeatherApiCalls():
 class CurrentConditions(WeatherApiCalls):
     def __init__(self):
         # return a tempory object of the parent class so that its methods can be called
-        super().__init__()
+        super().__init__()        
 
     # create a method to get the current temperature
     def temperature(self):
         # call the method to collect json data for the weather in cape town
         json_response = super().call_weather_api() 
-        # retrieve the temperature float from the json response by indexing the dictionary
-        current_temp = json_response.get["current"]["temp"]
+        # retrieve the temperature float from the json response dictionary with get()  
+        # put default values if no key found, note its a dict & float as seen from the json_response
+        current_temp = json_response.get("current", {}).get("temp", 0.0)
         # round the temperature
         round_temp = round(current_temp)
         # return the temperature
@@ -100,12 +101,14 @@ class CurrentConditions(WeatherApiCalls):
         # call the method to collect json data for the weather in cape town
         json_response = super().call_weather_api() 
         # retrieve the description from the json response by indexing the dictionary
-        description = json_response.get["current"]["weather"]["description"]
+        # put default values if no key found, note its a dict, list & str as seen from the json_response
+        # idx 0 for weather since the dict value is the 1st in the list
+        description = json_response.get("current", {}).get("weather", [])[0].get("description", "")
         # return the description
         return description
 
 # create an instance of WeatherApiCalls class
-weather = WeatherApiCalls() 
+##weather = WeatherApiCalls() 
 
 # call method to find the location of selected city - cape town
 # comment out coordinate after initial method was called because it does not need repetition       
@@ -113,7 +116,7 @@ weather = WeatherApiCalls()
 
 # create an instance of CurrentConditions class
 # pass the instance of WeatherApiCalls class as the argument
-current_weather = CurrentConditions(weather)
+##current_weather = CurrentConditions(weather)
 # call method to retrieve the current weather in cape town
-current_temperature = current_weather.temperature
-weather_description = current_weather.weather_description
+##current_temperature = current_weather.temperature
+##weather_description = current_weather.weather_description
