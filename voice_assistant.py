@@ -27,6 +27,9 @@ import webbrowser
 # import Joking
 import Joking
 
+# import Weather class
+from api_calls import *
+
 #################################################################################################
 # Functions
 
@@ -71,9 +74,11 @@ def start_engine():
 
 # create class methods from the base class, StartEngine()
 # the class contains the methods that welcome the user & introduce the program
-class AssistantWelcome():
-    # initialise AssistantWelcome() with ts engine    
+class AssistantWelcome(CurrentConditions):    
     def __init__(self, engine):
+        # return a tempory object of the parent class so that its methods can be called
+        super().__init__()
+        # initialise AssistantWelcome() with ts engine    
         self.engine = engine
         # place self as a parameter when calling an instance for the user_suggestion, 
         # UserInput needs access to AssistantWelcome
@@ -100,7 +105,7 @@ class AssistantWelcome():
         """A method for the assistant ot greet the user.
         """
         # print greeting
-        print("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")
+        print("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.\n")
         # call assistant_speak() to say the greeting
         self.assistant_speak("Hello, I am Zira. I can assist you with a variety of tasks to the best of my ability.")        
 
@@ -121,10 +126,20 @@ class AssistantWelcome():
         date = datetime.date.today().strftime("%d")
         month = datetime.date.today().strftime("%B")
 
-        # print the present conditions
-        print(f"It is {time} on {day}, {date} of {month}.\n")
+        # call inherited class' methods to retrieve the current weather in cape town
+        current_temperature = super().temperature()
+        weather_description = super().weather_description()
+
+        # print the present conditions        
+        print(f"""
+              It is {time} on {day}, {date} of {month}. 
+              The current weather in Cape Town is {current_temperature} degrees Celsius with a {weather_description}.\n
+              """)
         # call assistant_speak to say the present conditions
-        self.assistant_speak(f"It is {time} on {day}, {date} of {month}.")        
+        self.assistant_speak(f"""
+                             It is {time} on {day}, {date} of {month}. 
+                             The current weather in Cape Town is {current_temperature} degrees Celsius with a {weather_description}.
+                             """)        
 
     # ask the user for their name
     def request_user_name(self):
@@ -179,7 +194,8 @@ class AssistantWelcome():
                       Open Instagram.
                       Open Google.
                       Play...
-                      Tell me a dad joke.                      
+                      Tell me a dad joke.     
+                      What is the weather?                 
                       Goodbye.
                     """)
         
@@ -212,7 +228,7 @@ class UserInput():
                 # initialise the microphone as the audio source
                 with sr.Microphone() as source:  
                     # set the energy threshold for a quiet environment (set high e.g. 3000 for noisy)
-                    self.r.energy_threshold = 600  
+                    self.r.energy_threshold = 1000  
                     # add a pause threshold - seconds of non-speaking audio before a phrase is considered complete
                     # https://github.com/Uberi/speech_recognition/blob/master/speech_recognition/__init__.py
                     self.r.pause_threshold = 2.5            
@@ -426,8 +442,14 @@ def main():
     # create an instance of UserMenu
     user_menu = UserMenu(user_input)
 
+    # create an instance of CurrentConditions class 
+    # - (no need to create an instance of WeatherApiCalls because its methods are inherited)
+    # do not pass the weather instance as the argument because it is already inherited & initialised with super()
+    # -fixes TypeError: CurrentConditions.__init__() takes 1 positional argument but 2 were given
+    current_weather = CurrentConditions()
+
     # instruct the user on how to use the voice assistant
-    print("Select an option from the following suggestions or exit the menu with 'Goodbye'")
+    print("Select an option from the following suggestions or exit the menu with 'Goodbye'\n")
     assistant_welcome.assistant_speak("Select an option from the following suggestions or exit the menu with a 'Goodbye'.")
 
     # use a loop to use the menu until the user says goodbye to exit the voice assistant
@@ -505,12 +527,22 @@ def main():
                 # call method so that the assistant can say the joke
                 assistant_welcome.assistant_speak(f"Here's a dad joke: {dad_joke}")
 
+            # if the user asks for the weather
+            elif "weather" in user_task_request:                
+                # call method to retrieve the current weather in cape town
+                current_temperature = current_weather.temperature()
+                weather_description = current_weather.weather_description()
+                # print out the assistant saying the weather
+                print(f"The current weather in Cape Town is {current_temperature} degrees Celsius with a {weather_description}.\n")
+                # call method so that the assistant can say the weather
+                assistant_welcome.assistant_speak(f"The current weather in Cape Town is {current_temperature} degrees Celsius with a {weather_description}.")
+
             # if the user wants to end the voice assistant session
             elif "bye" in user_task_request:
                 # print out the assistant saying goodbye
-                print(f"Goodbye {user_name_isolated}")
+                print(f"Goodbye {user_name_isolated}\n")
                 # call assistant_speak method to say bye
-                assistant_welcome.assistant_speak(f"Goodbye {user_name_isolated}\n")
+                assistant_welcome.assistant_speak(f"Goodbye {user_name_isolated}!")
                 break
 
             # if the voice assistant did not recognise a request
@@ -526,7 +558,7 @@ def main():
             
         # finally print a closing statement upon exit
         finally:
-            print("Thank you for using the voice assistant!\n")
+            print("\nThank you for using the voice assistant!\n")
 
     
         
