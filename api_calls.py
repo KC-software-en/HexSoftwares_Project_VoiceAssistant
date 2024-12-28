@@ -1,12 +1,12 @@
 # import requests to use the API for weather
 import requests
 
-# import json to work with the data retrieved from the open trivia db API
+# import json to work with the data retrieved from the openweathermap.org API
 import json  
 
 #####################################################################################################################
 
-
+# parent class that makes API call to openweathermap
 class WeatherApiCalls():    
     def __init__(self):
         # put in env file ###################
@@ -51,7 +51,7 @@ class WeatherApiCalls():
         longitude = 18.4172197
         exclude = 'minutely,hourly,daily,alerts'
         ##weather_api_call = f'https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&exclude={exclude}&appid={self.api_key}'
-        weather_api_call = 'https://api.openweathermap.org/data/3.0/onecall?lat=-33.9288301&lon=18.4172197&exclude=minutely,hourly,daily,alerts&appid=fccc12b66bb2eee64c79eb57ac4503cf'
+        weather_api_call = 'https://api.openweathermap.org/data/3.0/onecall?lat=-33.9288301&lon=18.4172197&units=metric&appid=fccc12b66bb2eee64c79eb57ac4503cf'
 
         # store url in a variable as a json response
         response = requests.get(weather_api_call)
@@ -78,6 +78,32 @@ class WeatherApiCalls():
             print(error_message)
             return None
 
+# derived/subclass of WeatherApiCalls
+class CurrentConditions(WeatherApiCalls):
+    def __init__(self):
+        # return a tempory object of the parent class so that its methods can be called
+        super().__init__()
+
+    # create a method to get the current temperature
+    def temperature(self):
+        # call the method to collect json data for the weather in cape town
+        json_response = super().call_weather_api() 
+        # retrieve the temperature float from the json response by indexing the dictionary
+        current_temp = json_response.get["current"]["temp"]
+        # round the temperature
+        round_temp = round(current_temp)
+        # return the temperature
+        return round_temp
+    
+    # create a method to get the weather description
+    def weather_description(self):
+        # call the method to collect json data for the weather in cape town
+        json_response = super().call_weather_api() 
+        # retrieve the description from the json response by indexing the dictionary
+        description = json_response.get["current"]["weather"]["description"]
+        # return the description
+        return description
+
 # create an instance of WeatherApiCalls class
 weather = WeatherApiCalls() 
 
@@ -85,5 +111,8 @@ weather = WeatherApiCalls()
 # comment out coordinate after initial method was called because it does not need repetition       
 # coordinates = weather.call_coord_api()
 
-# # call method to retrieve the current weather in cape town
-current_weather = weather.call_weather_api()
+# create an instance of CurrentConditions class
+current_weather = CurrentConditions(WeatherApiCalls)
+# call method to retrieve the current weather in cape town
+current_temperature = current_weather.temperature
+weather_description = current_weather.weather_description
