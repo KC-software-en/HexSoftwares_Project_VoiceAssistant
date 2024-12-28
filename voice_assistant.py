@@ -449,7 +449,7 @@ def main():
     current_weather = CurrentConditions()
 
     # instruct the user on how to use the voice assistant
-    print("Select an option from the following suggestions or exit the menu with 'Goodbye'\n")
+    print("Select an option from the following suggestions or exit the menu with a 'Goodbye'\n")
     assistant_welcome.assistant_speak("Select an option from the following suggestions or exit the menu with a 'Goodbye'.")
 
     # use a loop to use the menu until the user says goodbye to exit the voice assistant
@@ -543,6 +543,11 @@ def main():
                 print(f"Goodbye {user_name_isolated}\n")
                 # call assistant_speak method to say bye
                 assistant_welcome.assistant_speak(f"Goodbye {user_name_isolated}!")
+
+                # print a closing statement upon exit
+                print("Thank you for using the voice assistant!\n")
+                
+                # break the loop to end the program
                 break
 
             # if the voice assistant did not recognise a request
@@ -554,15 +559,7 @@ def main():
         # check that its the term the user wants to search
         except Exception as e:
             print(f"There was an error {e}. Please try again.\n")
-            assistant_welcome.assistant_speak("There was an error. Please try again.")
-            
-        # finally print a closing statement upon exit
-        finally:
-            print("\nThank you for using the voice assistant!\n")
-
-    
-        
-
+            assistant_welcome.assistant_speak("There was an error. Please try again.")                    
     
 
 #################################################################################################
