@@ -112,7 +112,8 @@ weather = WeatherApiCalls()
 # coordinates = weather.call_coord_api()
 
 # create an instance of CurrentConditions class
-current_weather = CurrentConditions(WeatherApiCalls)
+# pass the instance of WeatherApiCalls class as the argument
+current_weather = CurrentConditions(weather)
 # call method to retrieve the current weather in cape town
 current_temperature = current_weather.temperature
 weather_description = current_weather.weather_description
