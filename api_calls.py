@@ -32,6 +32,7 @@ class WeatherApiCalls():
                 print(f"{e} \nWeather API key not found in .env file.")
                 continue
 
+    # define a method that makes an API call to OpenWeatherMap.org for the co-ordinates of Cape Town
     def call_coord_api(self):
         """A method that calls the OpenWeatherMap.org API & fetches the co-ordinates for Cape Town.
 
@@ -76,13 +77,16 @@ class WeatherApiCalls():
 
         :return: Return the JSON response for Cape Town's weather.
         :rtype: dict
-        """        
+        """      
+        # copy coord from the city_coordinates.txt saved in call_coord_api() method
         latitude = -33.9288301
         longitude = 18.4172197
+        # set the units used in South Africa as metric
         units = 'metric'
+        # exclude unwated data from the json response
         exclude = 'minutely,hourly,daily,alerts'
-        weather_api_call = f'https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&{units}&exclude={exclude}&appid={self.api_key}'
-        ##weather_api_call = 'https://api.openweathermap.org/data/3.0/onecall?lat=-33.9288301&lon=18.4172197&units=metric&appid=fccc12b66bb2eee64c79eb57ac4503cf'
+        # construct the OpenWeatherMap.org API url for the one call api 3.0
+        weather_api_call = f'https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&units={units}&exclude={exclude}&appid={self.api_key}'        
 
         # store url in a variable as a json response
         response = requests.get(weather_api_call)
