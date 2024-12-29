@@ -10,6 +10,9 @@ from dotenv import load_dotenv
 # import os to access environment variables
 import os
 
+# import datetime to get the date, time
+from datetime import datetime,timedelta
+
 #####################################################################################################################
 
 # define a parent class that makes API calls to openweathermap
@@ -173,3 +176,58 @@ class NewsApiCalls():
             except KeyError as e:
                 print(f"{e} \nNews API key not found in .env file.")
                 continue
+
+    def call_news_api(self):
+        # select endpoint (everything is the alternative) 
+        endpoint = 'top-headlines'
+        # country for south africa
+        country = 'za'
+        # the category for which you want headlines
+        category = 'general'
+        
+        # set the oldest date to 24 hours ago
+        # use timedelta() to subtract 24 hours from the current time
+        # https://docs.python.org/3/library/datetime.html#timedelta-objects
+        # format the result into a str for ISO 8601 format 
+        latest_time = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S')
+        print(f"latest time {latest_time}") ##
+        # date & time for newest article allowed
+        # get the current time
+        # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes  
+        # format the result into a str for ISO 8601 format       
+        newest_time = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+        print(f"time now {newest_time}") ##
+        
+        # 2-letter ISO-639-1 code for desired language you want for articles        
+        language = 'en'
+        # sort search results by popularity in the response
+        sortBy = 'popularity'
+
+        # construct the newsapi.org API url 
+        # e.g. GET https://newsapi.org/v2/top-headlines?country=de&category=business&apiKey=4029e8b4afb943f2b44d67ed177bdddf
+        # e.g.GET https://newsapi.org/v2/everything?q=apple&from=2024-12-28&to=2024-12-28&sortBy=popularity&apiKey=4029e8b4afb943f2b44d67ed177bdddf
+        news_api_call = f'https://newsapi.org/v2/{endpoint}?country={country}&category={category}&from={latest_time}&to={newest_time}&language={language}&sortBy={sortBy}&apiKey={self.api_key}'
+
+        # store url in a variable as a json response
+        response = requests.get(news_api_call)
+
+        # check if the get request was successful
+        # parse the JSON content of the response using the .json() method
+        try:
+            # with a status code 200, the data can be parsed with json()            
+            json_response = response.json()
+
+            # write current weather for the city to a json file
+            with open("sa_news", "w") as f:
+                json.dump(json_response, f, indent=4)
+
+            # return the JSON content 
+            return json_response
+
+        # check if the get request was unsuccessful
+        except Exception as e:
+            # print error if unsuccessful request
+            # return None to signal that there's no valid data to work with
+            error_message = f"Unable to retrieve the latest news in SA - Status code:{response.status_code}\n{e}"
+            print(error_message)
+            return None
