@@ -19,7 +19,7 @@ import fontstyle
 import re 
 
 # import classes for automated web search with Selenium
-from auto_web_tasks import WikiBot, YouTubeVideo
+from auto_web_tasks import *
 
 # import webbrowser to open web pages
 import webbrowser
@@ -27,7 +27,7 @@ import webbrowser
 # import Joking
 import Joking
 
-# import Weather class
+# import WeatherApiCalls and NewsApiCalls classes
 from api_calls import *
 
 #################################################################################################
@@ -536,6 +536,21 @@ def main():
                 print(f"The current weather in Cape Town is {current_temperature} degrees Celsius with a {weather_description}.\n")
                 # call method so that the assistant can say the weather
                 assistant_welcome.assistant_speak(f"The current weather in Cape Town is {current_temperature} degrees Celsius with a {weather_description}.")
+
+            # if the user wants to read the latest news
+            elif "news" in user_task_request:
+                # create an instance of NewsApiCalls
+                news = NewsApiCalls()
+                # call news api method   
+                news.call_news_api()     
+                # if news.store_json_response() returns self.sa_json_response then call sa_articles method
+                # in other words it doesn't return None for an error or the tuple str, dict for USA
+
+                news_outcome = news.store_json_response()
+                if news_outcome != None and news_outcome.get("totalResults", 0) != 0:
+                    news.sa_articles()
+                else:                
+                    news.usa_articles()
 
             # if the user wants to end the voice assistant session
             elif "bye" in user_task_request:
