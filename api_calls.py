@@ -169,6 +169,7 @@ class NewsApiCalls():
             # break the loop
             try:
                 self.api_key = os.getenv('NEWS_API_KEY')
+                print("Got API key")##
                 break
             # except if the environment variable was not found
             # continue loop
@@ -179,55 +180,151 @@ class NewsApiCalls():
 
     def call_news_api(self):
         # select endpoint (everything is the alternative) 
-        endpoint = 'top-headlines'
+        self.endpoint = 'top-headlines'
         # country for south africa
-        country = 'za'
+        self.country = 'za'
         # the category for which you want headlines
-        category = 'general'
+        self.category = 'general'
         
         # set the oldest date to 24 hours ago
         # use timedelta() to subtract 24 hours from the current time
         # https://docs.python.org/3/library/datetime.html#timedelta-objects
         # format the result into a str for ISO 8601 format 
-        latest_time = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S')
-        print(f"latest time {latest_time}") ##
+        self.latest_time = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S')
+        
         # date & time for newest article allowed
         # get the current time
         # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes  
         # format the result into a str for ISO 8601 format       
-        newest_time = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-        print(f"time now {newest_time}") ##
+        self.newest_time = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')        
         
         # 2-letter ISO-639-1 code for desired language you want for articles        
-        language = 'en'
+        self.language = 'en'
         # sort search results by popularity in the response
-        sortBy = 'popularity'
+        self.sortBy = 'popularity'
 
-        # construct the newsapi.org API url 
+        # construct the newsapi.org API url for SA
         # e.g. GET https://newsapi.org/v2/top-headlines?country=de&category=business&apiKey=4029e8b4afb943f2b44d67ed177bdddf
         # e.g.GET https://newsapi.org/v2/everything?q=apple&from=2024-12-28&to=2024-12-28&sortBy=popularity&apiKey=4029e8b4afb943f2b44d67ed177bdddf
-        news_api_call = f'https://newsapi.org/v2/{endpoint}?country={country}&category={category}&from={latest_time}&to={newest_time}&language={language}&sortBy={sortBy}&apiKey={self.api_key}'
+        self.sa_news_api_call = f'https://newsapi.org/v2/{self.endpoint}?country={self.country}&category={self.category}&from={self.latest_time}&to={self.newest_time}&language={self.language}&sortBy={self.sortBy}&apiKey={self.api_key}'
+        print("Made API call for SA")##
 
+    # 
+    def store_json_response(self):
         # store url in a variable as a json response
-        response = requests.get(news_api_call)
+        sa_response = requests.get(self.sa_news_api_call)
 
         # check if the get request was successful
         # parse the JSON content of the response using the .json() method
         try:
             # with a status code 200, the data can be parsed with json()            
-            json_response = response.json()
+            self.sa_json_response = sa_response.json()                        
+                        
+            # if there are no news results for SA
+            if self.sa_json_response.get("totalResults", 0) == 0:
+                # save a str stating there are no results for SA
+                no_sa_news = "There is no news for South Africa on newsapi.org."
+                print(no_sa_news)##
+                
+                # try doing an api call for the USA's latest news
+                try:
+                    # construct the newsapi.org API url for USA as a backup       
+                    # overwrite country to USA
+                    self.country = 'us'
+                    self.usa_news_api_call = f'https://newsapi.org/v2/{self.endpoint}?country={self.country}&category={self.category}&from={self.latest_time}&to={self.newest_time}&language={self.language}&sortBy={self.sortBy}&apiKey={self.api_key}'
+                    print("Made API call for USA")##
 
-            # write current weather for the city to a json file
-            with open("sa_news", "w") as f:
-                json.dump(json_response, f, indent=4)
+                    # store url in a variable as a json response
+                    usa_response = requests.get(self.usa_news_api_call)
 
-            # return the JSON content 
-            return json_response
+                    # with a status code 200, the data can be parsed with json()            
+                    self.usa_json_response = usa_response.json()
+
+                    # write latest news for USA to a json file
+                    with open("usa_news.txt", "w") as f:
+                        json.dump(self.usa_json_response, f, indent=4)
+                        print("Wrote latest news for USA to a .txt file.")##
+
+                    # return the feedback that there is no news for SA & the JSON content for USA
+                    return no_sa_news, self.usa_json_response
+                
+                # check if the get request was unsuccessful
+                except Exception as e:
+                    # print error if unsuccessful request
+                    # return None to signal that there's no valid data to work with
+                    error_message = f"Unable to retrieve the latest news in USA - Status code:{usa_response.status_code}\n{e}"
+                    print(error_message)
+                    return None
+            
+            else:
+                # write latest news for SA to a json file
+                with open("sa_news.txt", "w") as f:
+                    json.dump(self.sa_json_response, f, indent=4)
+                    print("Wrote latest news for SA to a .txt file.")##                                                               
+
+                # return the JSON content 
+                return self.sa_json_response
 
         # check if the get request was unsuccessful
         except Exception as e:
             # print error if unsuccessful request
             # return None to signal that there's no valid data to work with
-            error_message = f"Unable to retrieve the latest news in SA - Status code:{response.status_code}\n{e}"
+            error_message = f"Unable to retrieve the latest news in SA - Status code:{sa_response.status_code}\n{e}"
             print(error_message)
             return None
+        
+    def sa_articles(self):
+        # number of articles that are popular in SA in the last 24 hours
+        num_of_articles = self.sa_json_response.get("totalResults", 0)
+        print(f"num_of_articles {num_of_articles}")##
+        
+        articles = self.sa_json_response.get("articles", [])
+        # idx 5 most recently published news articles that are popular in SA
+        # get their titles & url
+        top_five_articles = articles[:5]
+        top_five_article_titles = [article.get("title", "") for article in top_five_articles]
+        # use enumerate() to number the 5 titles when printing
+        for i, title in enumerate(top_five_article_titles, start=1):
+            print(f"{i}. {title}\n")                    
+        
+        top_five_article_url = [article.get("url", "") for article in top_five_articles]
+        # use enumerate() to number the 5 titles when printing
+        for i, url in enumerate(top_five_article_url, start=1):
+            print(f"({i}). {url}\n") 
+
+        # return the no. of articles, top 5 titles & their 5 urls
+        return num_of_articles, top_five_article_titles, top_five_article_url
+    
+    def usa_articles(self):
+        # number of articles that are popular in USA in the last 24 hours
+        num_of_articles = self.usa_json_response.get("totalResults", 0)
+        print(f"num_of_articles {num_of_articles}")##
+        
+        articles = self.usa_json_response.get("articles", [])
+        # idx 5 most recently published news articles that are popular in USA
+        # get their titles & url
+        top_five_articles = articles[:5]
+
+        # use list comprehension to get() the title of 5 articles in the list of articles dict
+        top_five_article_titles = [article.get("title", "") for article in top_five_articles]
+        # use enumerate() to number the 5 titles when printing
+        for i, title in enumerate(top_five_article_titles, start=1):
+            print(f"{i}. {title}\n")                    
+        
+        # use list comprehension to get() the url of 5 articles in the list of articles dict
+        top_five_article_url = [article.get("url", "") for article in top_five_articles]
+        # use enumerate() to number the 5 titles when printing
+        for i, url in enumerate(top_five_article_url, start=1):
+            print(f"({i}). {url}\n") 
+
+        # return the no. of articles, top 5 titles & their 5 urls
+        return num_of_articles, top_five_article_titles, top_five_article_url
+
+        
+# create an instance of NewsApiCalls
+news = NewsApiCalls()
+# call news api method   
+news.call_news_api()     
+news.store_json_response()
+news.sa_articles()
+news.usa_articles()
