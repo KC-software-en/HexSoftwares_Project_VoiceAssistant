@@ -154,3 +154,22 @@ class CurrentConditions(WeatherApiCalls):
 # call method to find the location of selected city - cape town
 # comment out coordinates after initial method was called because it does not need repetition       
 # coordinates = weather.call_coord_api()
+
+class NewsApiCalls():
+    def __init__(self):        
+        # put api key in .env file
+        # load api key from .env file
+        load_dotenv()
+        # use try-except defense in a loop to retrieve the API key
+        while True:
+            # try to fetch the environment variable for news
+            # break the loop
+            try:
+                self.api_key = os.getenv('NEWS_API_KEY')
+                break
+            # except if the environment variable was not found
+            # continue loop
+            # then check the .env file to see it's there
+            except KeyError as e:
+                print(f"{e} \nNews API key not found in .env file.")
+                continue
