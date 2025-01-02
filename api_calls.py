@@ -319,12 +319,4 @@ class NewsApiCalls():
 
         # return the no. of articles, top 5 titles & their 5 urls
         return num_of_articles, top_five_article_titles, top_five_article_url
-
         
-# create an instance of NewsApiCalls
-news = NewsApiCalls()
-# call news api method   
-news.call_news_api()     
-news.store_json_response()
-news.sa_articles()
-news.usa_articles()
