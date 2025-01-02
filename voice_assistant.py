@@ -543,14 +543,85 @@ def main():
                 news = NewsApiCalls()
                 # call news api method   
                 news.call_news_api()     
+
                 # if news.store_json_response() returns self.sa_json_response then call sa_articles method
                 # in other words it doesn't return None for an error or the tuple str, dict for USA
-
                 news_outcome = news.store_json_response()
                 if news_outcome != None and news_outcome.get("totalResults", 0) != 0:
-                    news.sa_articles()
-                else:                
-                    news.usa_articles()
+                    # unpack the returned tuple, from calling the sa_articles() method, into 3 variables
+                    num_of_articles, top_five_article_titles, top_five_article_url = news.sa_articles()                    
+                    # print out the number of articles
+                    print(f"The number of popular, general news articles for South Africa in the last 24 hours are {num_of_articles}.\n")
+                    # call method so that the assistant can say the number of articles
+                    assistant_welcome.assistant_speak(
+                        f"The number of general news articles for South Africa in the last 24 hours are {num_of_articles}.")
+
+                    # print out the assistant saying the top 5 articles' titles
+                    print("Here are the titles of the top 5 articles:\n")
+                    # call method so that the assistant can introduce the top 5 articles' titles
+                    assistant_welcome.assistant_speak("Here are the titles of the top 5 articles:")
+                    # traverse through the list of top 5 articles' titles
+                    # print the titles
+                    for title in top_five_article_titles:
+                        print(f"{title}\n")
+                        # call method so that the assistant can say the title
+                        assistant_welcome.assistant_speak(f"{title}")
+
+                    # print out the urls of the top 5 articles
+                    print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
+                          Opening...
+                          """)
+                    # call method so that the assistant can say she is opening the links to the top 5 articles
+                    assistant_welcome.assistant_speak(f"""I will now open the links to the top 5 articles for you to read at your leisure.
+                          Opening...
+                          """)
+                    # traverse through the list of urls 
+                    # call the open_browser method to open the 5 articles in the browser
+                    for url in top_five_article_url:
+                        user_menu.open_browser(url)
+                        
+                # else return the backup information for USA articles
+                else:       
+                    # unpack the returned tuple, from calling the store_json_response() method, into 2 variables   
+                    # use _ as a placeholder for the variable that won't be used
+                    no_sa_news, _ = news.store_json_response()   
+                    # print out no_sa_news   
+                    print(f"{no_sa_news}\n")
+                    # call method so that the assistant can say there is no news for USA
+                    assistant_welcome.assistant_speak(f"{no_sa_news}")
+                    # unpack the returned tuple, from calling the usa_articles() method, into 3 variables
+                    num_of_articles, top_five_article_titles, top_five_article_url = news.usa_articles()
+
+                    # print out the number of articles
+                    print(f"The number of popular, general news articles for the United States of America in the last 24 hours are {num_of_articles}.\n")
+                    # call method so that the assistant can say the number of articles
+                    assistant_welcome.assistant_speak(
+                        f"The number of popular, general news articles for the United States of America in the last 24 hours are {num_of_articles}.")
+
+                    # print out the assistant saying the top 5 articles' titles
+                    print("Here are the titles of the top 5 articles:\n")
+                    # call method so that the assistant can introduce the top 5 articles' titles
+                    assistant_welcome.assistant_speak("Here are the titles of the top 5 articles:")
+                    # traverse through the list of top 5 articles' titles
+                    # print the titles
+                    for title in top_five_article_titles:
+                        print(f"{title}\n")
+                        # call method so that the assistant can say the title
+                        assistant_welcome.assistant_speak(f"{title}")
+
+                    # print out the urls of the top 5 articles
+                    print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
+                          Opening...
+                          """)
+                    # call method so that the assistant can say she is opening the links to the top 5 articles
+                    assistant_welcome.assistant_speak(f"""I will now open the links to the top 5 articles for you to read at your leisure.
+                          Opening...
+                          """)
+                    
+                    # traverse through the list of urls 
+                    # call the open_browser method to open the 5 articles in the browser
+                    for url in top_five_article_url:
+                        user_menu.open_browser(url)
 
             # if the user wants to end the voice assistant session
             elif "bye" in user_task_request:
