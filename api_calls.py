@@ -257,10 +257,7 @@ class NewsApiCalls():
                 # write latest news for SA to a json file
                 with open("sa_news.txt", "w") as f:
                     json.dump(self.sa_json_response, f, indent=4)
-                    print("Wrote latest news for SA to a .txt file.")##                                                               
-
-                # return the JSON content 
-                return self.sa_json_response
+                    print("Wrote latest news for SA to a .txt file.")##                                                                               
 
         # check if the get request was unsuccessful
         except Exception as e:
@@ -299,9 +296,6 @@ class NewsApiCalls():
         :return: Return the number of popular, general news articles for the USA, top 5 titles and their urls
         :rtype: _type_
         """
-        print(f"usa_json_response type: {type(self.usa_json_response)}")
-        print(f"usa_json_response content: {self.usa_json_response}")
-
         # number of articles that are popular in USA in the last 24 hours
         num_of_articles = self.usa_json_response.get("totalResults", 0)
         print(f"num_of_articles {num_of_articles}")##
@@ -312,16 +306,10 @@ class NewsApiCalls():
         top_five_articles = articles[:5]
 
         # use list comprehension to get() the title of 5 articles in the list of articles dict
-        top_five_article_titles = [article.get("title", "") for article in top_five_articles]
-        # use enumerate() to number the 5 titles when printing
-        for i, title in enumerate(top_five_article_titles, start=1):
-            print(f"{i}. {title}\n")                    
+        top_five_article_titles = [article.get("title", "") for article in top_five_articles]                            
         
         # use list comprehension to get() the url of 5 articles in the list of articles dict
-        top_five_article_url = [article.get("url", "") for article in top_five_articles]
-        # use enumerate() to number the 5 titles when printing
-        for i, url in enumerate(top_five_article_url, start=1):
-            print(f"({i}). {url}\n") 
+        top_five_article_url = [article.get("url", "") for article in top_five_articles]         
 
         # return the no. of articles, top 5 titles & their 5 urls
         return num_of_articles, top_five_article_titles, top_five_article_url
