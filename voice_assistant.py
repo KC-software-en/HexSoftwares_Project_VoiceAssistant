@@ -610,6 +610,12 @@ def main():
                         assistant_welcome.assistant_speak(f"{title}")
 
                     # print out the urls of the top 5 articles
+                    # use enumerate() to number the 5 titles when printing
+                    print("Here are the URLs of the top 5 articles:\n")
+                    for i, url in enumerate(top_five_article_url, start=1):
+                        print(f"({i}). {url}\n")
+
+                    # print out the assistant saying the top 5 articles' urls is opening in the browser
                     print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
                           Opening...\n
                           """)
