@@ -158,6 +158,7 @@ class CurrentConditions(WeatherApiCalls):
 # comment out coordinates after initial method was called because it does not need repetition       
 # coordinates = weather.call_coord_api()
 
+# define a parent class that makes API calls to newsapi.org
 class NewsApiCalls():
     def __init__(self):        
         # put api key in .env file
@@ -178,10 +179,13 @@ class NewsApiCalls():
                 print(f"{e} \nNews API key not found in .env file.")
                 continue
 
+    # define a method that makes an API call to newsapi.org for the latest news in South Africa
     def call_news_api(self):
+        """A method that calls the newsapi.org API & fetches the latest news in South Africa.
+        """
         # select endpoint (everything is the alternative) 
         self.endpoint = 'top-headlines'
-        # country for south africa
+        # country for South Africa
         self.country = 'za'
         # the category for which you want headlines
         self.category = 'general'
@@ -209,12 +213,18 @@ class NewsApiCalls():
         self.sa_news_api_call = f'https://newsapi.org/v2/{self.endpoint}?country={self.country}&category={self.category}&from={self.latest_time}&to={self.newest_time}&language={self.language}&sortBy={self.sortBy}&apiKey={self.api_key}'
         print("Made API call for SA")##
 
-    # 
+    # create a method that parses the json response for SA or makes a backup API call for the news in the USA
     def store_json_response(self):
+        """A method that parses the JSON response for SA and stores it in a text file. 
+        Make a backup API call for the news in the USA and stores it in a text file. 
+
+        :return: Return none if there are errors fetching the JSON data from the get() request to the API.
+        :rtype: NoneType
+        """
         # store url in a variable as a json response
         sa_response = requests.get(self.sa_news_api_call)
 
-        # check if the get request was successful
+        # use try-except blocks to check if the get request was successful
         # parse the JSON content of the response using the .json() method
         try:
             # with a status code 200, the data can be parsed with json()            
@@ -223,6 +233,7 @@ class NewsApiCalls():
             # if there are no news results for SA
             if self.sa_json_response.get("totalResults", 0) == 0:
                 # save a str stating there are no results for SA
+                # Note: returning this str for use in voice_assistant.py interrupted the program preventing get() on json resp
                 no_sa_news = "There is no news for South Africa on newsapi.org."
                 print(no_sa_news)##
                 
@@ -240,10 +251,13 @@ class NewsApiCalls():
                     # with a status code 200, the data can be parsed with json()            
                     self.usa_json_response = usa_response.json()
 
-                    # write latest news for USA to a json file
+                    # write latest news for USA to a text file
                     with open("usa_news.txt", "w") as f:
                         json.dump(self.usa_json_response, f, indent=4)
                         print("Wrote latest news for USA to a .txt file.")##                    
+                    
+                    # return the json response for USA
+                    return self.usa_json_response
                 
                 # check if the get request was unsuccessful
                 except Exception as e:
@@ -253,11 +267,15 @@ class NewsApiCalls():
                     print(error_message)
                     return None
             
+            # write SA json data to a text file if there are articles present
             else:
                 # write latest news for SA to a json file
                 with open("sa_news.txt", "w") as f:
                     json.dump(self.sa_json_response, f, indent=4)
                     print("Wrote latest news for SA to a .txt file.")##                                                                               
+
+                # return the json response for SA
+                return self.sa_json_response
 
         # check if the get request was unsuccessful
         except Exception as e:
@@ -266,51 +284,80 @@ class NewsApiCalls():
             error_message = f"Unable to retrieve the latest news in SA - Status code:{sa_response.status_code}\n{e}"
             print(error_message)
             return None
-        
-    def sa_articles(self):
-        # number of articles that are popular in SA in the last 24 hours
-        num_of_articles = self.sa_json_response.get("totalResults", 0)
-        print(f"num_of_articles {num_of_articles}")##
-        
-        articles = self.sa_json_response.get("articles", [])
-        # idx 5 most recently published news articles that are popular in SA
-        # get their titles & url
-        top_five_articles = articles[:5]
-        top_five_article_titles = [article.get("title", "") for article in top_five_articles]
-        # use enumerate() to number the 5 titles when printing
-        for i, title in enumerate(top_five_article_titles, start=1):
-            print(f"{i}. {title}\n")                    
-        
-        top_five_article_url = [article.get("url", "") for article in top_five_articles]
-        # use enumerate() to number the 5 titles when printing
-        for i, url in enumerate(top_five_article_url, start=1):
-            print(f"({i}). {url}\n") 
 
-        # return the no. of articles, top 5 titles & their 5 urls
-        return num_of_articles, top_five_article_titles, top_five_article_url
+# create derived/subclass of NewsApiCalls to get items from the json_response
+class NewsArticles(NewsApiCalls):
+    def __init__(self):
+        # return a tempory object of the parent class so that its methods can be called
+        super().__init__()
+
+    # define a method to fetch information from the SA json response
+    def sa_articles(self):
+        """A method to get the number of articles in the SA's latest news, their top 5 titles & urls.
+
+        :return: Return the number of popular, general news articles for the SA, top 5 titles and their urls
+        :rtype: (int, list, list)
+        """
+        # call the method to collect json data for the news in SA
+        json_response = super().store_json_response()
+
+        # check if the store_json_response method returned the SA json response
+        if json_response == self.sa_json_response:
+            # assign the json response as that for SA
+            sa_json_response = json_response
+
+            # get the number of articles that are popular in SA in the last 24 hours
+            num_of_articles = sa_json_response.get("totalResults", 0)
+            print(f"num_of_articles {num_of_articles}")##
+
+            # fetch the articles that are popular in SA in the last 24 hours
+            articles = sa_json_response.get("articles", [])
+            # idx 5 most recently published news articles that are popular in SA
+            # get their titles & url
+            top_five_articles = articles[:5]
+            top_five_article_titles = [article.get("title", "") for article in top_five_articles]
+            # use enumerate() to number the 5 titles when printing
+            for i, title in enumerate(top_five_article_titles, start=1):
+                print(f"{i}. {title}\n")                    
+
+            top_five_article_url = [article.get("url", "") for article in top_five_articles]
+            # use enumerate() to number the 5 titles when printing
+            for i, url in enumerate(top_five_article_url, start=1):
+                print(f"({i}). {url}\n") 
+
+            # return the no. of articles, top 5 titles & their 5 urls
+            return num_of_articles, top_five_article_titles, top_five_article_url
     
     # define a method to fetch information from the USA json response
     def usa_articles(self):
         """A method to get the number of articles in the USA's latest news, their top 5 titles & urls.
 
         :return: Return the number of popular, general news articles for the USA, top 5 titles and their urls
-        :rtype: _type_
+        :rtype: (int, list, list)
         """
-        # number of articles that are popular in USA in the last 24 hours
-        num_of_articles = self.usa_json_response.get("totalResults", 0)
-        print(f"num_of_articles {num_of_articles}")##
-        
-        articles = self.usa_json_response.get("articles", [])
-        # idx 5 most recently published news articles that are popular in USA
-        # get their titles & url
-        top_five_articles = articles[:5]
+        # call the method to collect json data for the news in USA
+        json_response = super().store_json_response()
 
-        # use list comprehension to get() the title of 5 articles in the list of articles dict
-        top_five_article_titles = [article.get("title", "") for article in top_five_articles]                            
-        
-        # use list comprehension to get() the url of 5 articles in the list of articles dict
-        top_five_article_url = [article.get("url", "") for article in top_five_articles]         
+        # check if the store_json_response method returned the USA json response
+        if json_response == self.usa_json_response:
+            # assign the json response as that for SA
+            usa_json_response = json_response
 
-        # return the no. of articles, top 5 titles & their 5 urls
-        return num_of_articles, top_five_article_titles, top_five_article_url
+            # number of articles that are popular in USA in the last 24 hours
+            num_of_articles = usa_json_response.get("totalResults", 0)
+            print(f"num_of_articles {num_of_articles}")##
+
+            articles = usa_json_response.get("articles", [])
+            # idx 5 most recently published news articles that are popular in USA
+            # get their titles & url
+            top_five_articles = articles[:5]
+
+            # use list comprehension to get() the title of 5 articles in the list of articles dict
+            top_five_article_titles = [article.get("title", "") for article in top_five_articles]                            
+
+            # use list comprehension to get() the url of 5 articles in the list of articles dict
+            top_five_article_url = [article.get("url", "") for article in top_five_articles]         
+
+            # return the no. of articles, top 5 titles & their 5 urls
+            return num_of_articles, top_five_article_titles, top_five_article_url
         
