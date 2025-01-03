@@ -603,9 +603,9 @@ def main():
                     # call method so that the assistant can introduce the top 5 articles' titles
                     assistant_welcome.assistant_speak("Here are the titles of the top 5 articles:")
                     # traverse through the list of top 5 articles' titles
-                    # print the titles
-                    for title in top_five_article_titles:
-                        print(f"{title}\n")
+                    # use enumerate() to number the 5 titles when printing
+                    for i, title in enumerate(top_five_article_titles, start=1):
+                        print(f"{i}. {title}\n") 
                         # call method so that the assistant can say the title
                         assistant_welcome.assistant_speak(f"{title}")
 
