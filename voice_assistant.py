@@ -195,7 +195,8 @@ class AssistantWelcome(CurrentConditions):
                       Open Google.
                       Play...
                       Tell me a dad joke.     
-                      What is the weather?                 
+                      What is the weather?  
+                      What is the latest news?               
                       Goodbye.
                     """)
         
