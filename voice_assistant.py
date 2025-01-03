@@ -540,10 +540,8 @@ def main():
 
             # if the user wants to read the latest news
             elif "news" in user_task_request:
-                # create an instance of NewsApiCalls
-                news = NewsApiCalls()
-                # call news api method   
-                news.call_news_api()     
+                # create an instance of subclass NewsArticles() which inherits from NewsApiCalls() for access to its methods
+                news = NewsArticles()                
 
                 # if news.store_json_response() returns self.sa_json_response then call sa_articles method
                 # in other words it doesn't return None for an error or the tuple str, dict for USA
