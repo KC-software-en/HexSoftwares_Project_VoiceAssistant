@@ -4,7 +4,7 @@
 import pyttsx3 as ts
 
 # import datetime to get the date, time
-import datetime
+from datetime import datetime
 
 # import speech_recognition so that Google API can process input to the microphone
 # https://pypi.org/project/SpeechRecognition/
@@ -115,16 +115,16 @@ class AssistantWelcome(CurrentConditions):
         """
         # get the current time
         # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
-        time = datetime.datetime.now().strftime("%I:%M%p")
+        time = datetime.now().strftime("%I:%M%p")
 
         # get the day
         # https://docs.python.org/3/library/datetime.html#datetime.datetime.date
-        day = datetime.date.today().strftime("%A")
+        day = datetime.now().strftime("%A")
 
         # get the date
         # https://docs.python.org/3/library/datetime.html#datetime.date.today
-        date = datetime.date.today().strftime("%d")
-        month = datetime.date.today().strftime("%B")
+        date = datetime.now().strftime("%d")
+        month = datetime.now().strftime("%B")
 
         # call inherited class' methods to retrieve the current weather in cape town
         current_temperature = super().temperature()
@@ -167,7 +167,7 @@ class AssistantWelcome(CurrentConditions):
         :type user_name: str
         """                
         # get the current time's hour
-        time = datetime.datetime.now().hour #int
+        time = datetime.now().hour #int
         # use the hour to greet with either morning, afternoon or evening
         # if morning
         if time < 12:
