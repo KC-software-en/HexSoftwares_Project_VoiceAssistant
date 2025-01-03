@@ -179,6 +179,9 @@ class NewsApiCalls():
                 print(f"{e} \nNews API key not found in .env file.")
                 continue
 
+        # initialise API urls during object creation with the call_news_api() method to ensure it's available in other methods
+        self.call_news_api()
+
     # define a method that makes an API call to newsapi.org for the latest news in South Africa
     def call_news_api(self):
         """A method that calls the newsapi.org API & fetches the latest news in South Africa.
@@ -315,15 +318,10 @@ class NewsArticles(NewsApiCalls):
             # idx 5 most recently published news articles that are popular in SA
             # get their titles & url
             top_five_articles = articles[:5]
-            top_five_article_titles = [article.get("title", "") for article in top_five_articles]
-            # use enumerate() to number the 5 titles when printing
-            for i, title in enumerate(top_five_article_titles, start=1):
-                print(f"{i}. {title}\n")                    
-
-            top_five_article_url = [article.get("url", "") for article in top_five_articles]
-            # use enumerate() to number the 5 titles when printing
-            for i, url in enumerate(top_five_article_url, start=1):
-                print(f"({i}). {url}\n") 
+            # use list comprehension to get() the title of 5 articles in the list of articles dict
+            top_five_article_titles = [article.get("title", "") for article in top_five_articles] 
+            # use list comprehension to get() the url of 5 articles in the list of articles dict                              
+            top_five_article_url = [article.get("url", "") for article in top_five_articles]             
 
             # return the no. of articles, top 5 titles & their 5 urls
             return num_of_articles, top_five_article_titles, top_five_article_url
@@ -356,8 +354,7 @@ class NewsArticles(NewsApiCalls):
             top_five_article_titles = [article.get("title", "") for article in top_five_articles]                            
 
             # use list comprehension to get() the url of 5 articles in the list of articles dict
-            top_five_article_url = [article.get("url", "") for article in top_five_articles]         
+            top_five_article_url = [article.get("url", "") for article in top_five_articles]                                          
 
             # return the no. of articles, top 5 titles & their 5 urls
             return num_of_articles, top_five_article_titles, top_five_article_url
-        
