@@ -562,13 +562,17 @@ def main():
                     # call method so that the assistant can introduce the top 5 articles' titles
                     assistant_welcome.assistant_speak("Here are the titles of the top 5 articles:")
                     # traverse through the list of top 5 articles' titles
-                    # print the titles
-                    for title in top_five_article_titles:
-                        print(f"{title}\n")
+                    # use enumerate() to number the 5 titles when printing
+                    for i, title in enumerate(top_five_article_titles, start=1):
+                        print(f"{i}. {title}\n") 
                         # call method so that the assistant can say the title
                         assistant_welcome.assistant_speak(f"{title}")
 
-                    # print out the urls of the top 5 articles
+                    # print out the urls of the top 5 articles                    
+                    # use enumerate() to number the 5 urls when printing
+                    print("Here are the URLs of the top 5 articles:\n")
+                    for i, url in enumerate(top_five_article_url, start=1):
+                        print(f"({i}). {url}\n")
                     print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
                           Opening...\n
                           """)
@@ -610,7 +614,7 @@ def main():
                         assistant_welcome.assistant_speak(f"{title}")
 
                     # print out the urls of the top 5 articles
-                    # use enumerate() to number the 5 titles when printing
+                    # use enumerate() to number the 5 urls when printing
                     print("Here are the URLs of the top 5 articles:\n")
                     for i, url in enumerate(top_five_article_url, start=1):
                         print(f"({i}). {url}\n")
