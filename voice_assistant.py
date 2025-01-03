@@ -561,18 +561,16 @@ def main():
                     print("Here are the titles of the top 5 articles:\n")
                     # call method so that the assistant can introduce the top 5 articles' titles
                     assistant_welcome.assistant_speak("Here are the titles of the top 5 articles:")
-                    # traverse through the list of top 5 articles' titles
+                    # traverse over the list of top 5 articles' titles and urls
                     # use enumerate() to number the 5 titles when printing
-                    for i, title in enumerate(top_five_article_titles, start=1):
-                        print(f"{i}. {title}\n") 
+                    # use zip() to combine the list of titles & urls into tuples
+                    # iterate over the tuples
+                    for i, (title, url) in enumerate(zip(top_five_article_titles, top_five_article_url), start=1):
+                        print(f"{i}. {title}\n{url}\n")   
                         # call method so that the assistant can say the title
                         assistant_welcome.assistant_speak(f"{title}")
 
-                    # print out the urls of the top 5 articles                    
-                    # use enumerate() to number the 5 urls when printing
-                    print("Here are the URLs of the top 5 articles:\n")
-                    for i, url in enumerate(top_five_article_url, start=1):
-                        print(f"({i}). {url}\n")
+                    # print out the assistant saying the links for the articles are being opened
                     print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
                           Opening...\n
                           """)
@@ -606,18 +604,16 @@ def main():
                     print("Here are the titles of the top 5 articles:\n")
                     # call method so that the assistant can introduce the top 5 articles' titles
                     assistant_welcome.assistant_speak("Here are the titles of the top 5 articles:")
+                    
                     # traverse through the list of top 5 articles' titles
+                    # traverse over the list of top 5 articles' titles and urls
                     # use enumerate() to number the 5 titles when printing
-                    for i, title in enumerate(top_five_article_titles, start=1):
-                        print(f"{i}. {title}\n") 
+                    # use zip() to combine the list of titles & urls into tuples
+                    # iterate over the tuples
+                    for i, (title, url) in enumerate(zip(top_five_article_titles, top_five_article_url), start=1):
+                        print(f"{i}. {title}\n{url}\n")  
                         # call method so that the assistant can say the title
                         assistant_welcome.assistant_speak(f"{title}")
-
-                    # print out the urls of the top 5 articles
-                    # use enumerate() to number the 5 urls when printing
-                    print("Here are the URLs of the top 5 articles:\n")
-                    for i, url in enumerate(top_five_article_url, start=1):
-                        print(f"({i}). {url}\n")
 
                     # print out the assistant saying the top 5 articles' urls is opening in the browser
                     print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
