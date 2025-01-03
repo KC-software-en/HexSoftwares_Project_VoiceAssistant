@@ -339,7 +339,7 @@ class UserInput():
                 # call method to format error message
                 self.user_error("Please use the suggested phrase before saying your name.")
                 # call assistant_speak method to let the assistant say the error
-                self.assistant.assistant_speak("Please use the suggested phrase before saying you name.")
+                self.assistant.assistant_speak("Please use the suggested phrase before saying your name.")
                 
                 # call request_user_name() again
                 self.assistant.request_user_name()
@@ -428,7 +428,7 @@ def main():
     # greet user
     assistant_welcome.assistant_greeting()
     # inform user of present conditions
-    assistant_welcome.present_conditions() 
+    assistant_welcome.present_conditions() ##
 
     # request the user to input the name over the microphone
     assistant_welcome.request_user_name()
@@ -569,7 +569,7 @@ def main():
 
                     # print out the urls of the top 5 articles
                     print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
-                          Opening...
+                          Opening...\n
                           """)
                     # call method so that the assistant can say she is opening the links to the top 5 articles
                     assistant_welcome.assistant_speak(f"""I will now open the links to the top 5 articles for you to read at your leisure.
@@ -581,10 +581,9 @@ def main():
                         user_menu.open_browser(url)
                         
                 # else return the backup information for USA articles
-                else:       
-                    # unpack the returned tuple, from calling the store_json_response() method, into 2 variables   
-                    # use _ as a placeholder for the variable that won't be used
-                    no_sa_news, _ = news.store_json_response()   
+                else:                           
+                    # save a str stating there are no results for SA
+                    no_sa_news = "There is no news for South Africa on newsapi.org."
                     # print out no_sa_news   
                     print(f"{no_sa_news}\n")
                     # call method so that the assistant can say there is no news for USA
@@ -611,7 +610,7 @@ def main():
 
                     # print out the urls of the top 5 articles
                     print(f"""I will now open the links to the top 5 articles for you to read at your leisure.
-                          Opening...
+                          Opening...\n
                           """)
                     # call method so that the assistant can say she is opening the links to the top 5 articles
                     assistant_welcome.assistant_speak(f"""I will now open the links to the top 5 articles for you to read at your leisure.
