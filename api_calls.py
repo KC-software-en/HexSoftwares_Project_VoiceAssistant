@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import os
 
 # import datetime to get the date, time
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 #####################################################################################################################
 
@@ -243,10 +243,7 @@ class NewsApiCalls():
                     # write latest news for USA to a json file
                     with open("usa_news.txt", "w") as f:
                         json.dump(self.usa_json_response, f, indent=4)
-                        print("Wrote latest news for USA to a .txt file.")##
-
-                    # return the feedback that there is no news for SA & the JSON content for USA
-                    return no_sa_news, self.usa_json_response
+                        print("Wrote latest news for USA to a .txt file.")##                    
                 
                 # check if the get request was unsuccessful
                 except Exception as e:
@@ -295,7 +292,16 @@ class NewsApiCalls():
         # return the no. of articles, top 5 titles & their 5 urls
         return num_of_articles, top_five_article_titles, top_five_article_url
     
+    # define a method to fetch information from the USA json response
     def usa_articles(self):
+        """A method to get the number of articles in the USA's latest news, their top 5 titles & urls.
+
+        :return: Return the number of popular, general news articles for the USA, top 5 titles and their urls
+        :rtype: _type_
+        """
+        print(f"usa_json_response type: {type(self.usa_json_response)}")
+        print(f"usa_json_response content: {self.usa_json_response}")
+
         # number of articles that are popular in USA in the last 24 hours
         num_of_articles = self.usa_json_response.get("totalResults", 0)
         print(f"num_of_articles {num_of_articles}")##
